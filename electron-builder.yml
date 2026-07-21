@@ -1,0 +1,17 @@
+appId: com.gior.app
+productName: GIOR - App Personal
+directories:
+  output: dist
+files:
+  - out/**/*
+  - package.json
+icon: resources/icon.png
+win:
+  target: nsis
+  executableName: GIOR - App Personal
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: GIOR - App Personal
