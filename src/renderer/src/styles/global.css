@@ -4734,6 +4734,50 @@ body.widget-shell::after {
   color: #b91c1c;
 }
 
+.update-status {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.update-status-ok {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.update-progress {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.update-progress-track {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(99, 102, 241, 0.08);
+  box-shadow: var(--shadow-neu-in-sm);
+  overflow: hidden;
+}
+
+.update-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--grad-brand);
+  transition: width 0.3s ease;
+}
+
+.update-ready {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .toggle-switch-row {
   display: flex;
   align-items: center;

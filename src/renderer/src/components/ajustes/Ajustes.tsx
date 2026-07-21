@@ -11,6 +11,7 @@ import {
   Monitor,
   Moon,
   Pencil,
+  RefreshCw,
   Sun,
   Upload,
   User,
@@ -25,6 +26,7 @@ import { getStoredTheme, setAppTheme } from '../../lib/theme'
 import { CUSTOM_QUESTION_VALUE, SECURITY_QUESTION_KEYS } from '../../lib/securityQuestions'
 import type { AppLanguage } from '../../lib/i18n'
 import type { ThemePreference } from '../../lib/theme'
+import type { UpdateStatus } from '../../../../shared/updater'
 
 type Message = { type: 'success' | 'error'; text: string }
 
@@ -601,6 +603,91 @@ function JsonBackupSection(): JSX.Element {
   )
 }
 
+function UpdateSection(): JSX.Element {
+  const { t } = useTranslation()
+  const [status, setStatus] = useState<UpdateStatus>({ state: 'idle' })
+  const [checking, setChecking] = useState(false)
+
+  useEffect(() => {
+    window.api.updater.getStatus().then(setStatus)
+    const unsubscribe = window.api.updater.onStatus((s) => {
+      setStatus(s)
+      if (s.state !== 'checking') setChecking(false)
+    })
+    return unsubscribe
+  }, [])
+
+  async function handleCheck(): Promise<void> {
+    setChecking(true)
+    const result = await window.api.updater.check()
+    if (!result.ok) {
+      setChecking(false)
+      setStatus({ state: 'error', message: result.error ?? 'errors.generic' })
+    }
+  }
+
+  async function handleInstall(): Promise<void> {
+    await window.api.updater.install()
+  }
+
+  function renderStatus(): JSX.Element | null {
+    switch (status.state) {
+      case 'checking':
+        return <p className="update-status">{t('ajustes.updates.checking')}</p>
+      case 'available':
+        return <p className="update-status">{t('ajustes.updates.available', { version: status.version })}</p>
+      case 'not-available':
+        return <p className="update-status update-status-ok">{t('ajustes.updates.upToDate')}</p>
+      case 'downloading':
+        return (
+          <div className="update-progress">
+            <div className="update-progress-track">
+              <div className="update-progress-fill" style={{ width: `${status.percent}%` }} />
+            </div>
+            <span>{t('ajustes.updates.downloading', { percent: status.percent })}</span>
+          </div>
+        )
+      case 'downloaded':
+        return (
+          <div className="update-ready">
+            <p className="update-status update-status-ok">
+              {t('ajustes.updates.ready', { version: status.version })}
+            </p>
+            <button type="button" className="pill-button pill-button-accent" onClick={handleInstall}>
+              {t('ajustes.updates.installButton')}
+            </button>
+          </div>
+        )
+      case 'error':
+        return <p className="error">{t(status.message)}</p>
+      default:
+        return null
+    }
+  }
+
+  return (
+    <div className="ajustes-section">
+      <div className="ajustes-section-header">
+        <div className="ajustes-section-icon">
+          <RefreshCw size={20} strokeWidth={1.75} />
+        </div>
+        <div>
+          <h2>{t('ajustes.updates.title')}</h2>
+          <p>{t('ajustes.updates.desc')}</p>
+        </div>
+      </div>
+
+      <div className="backup-option-actions">
+        <button type="button" className="pill-button" onClick={handleCheck} disabled={checking}>
+          {t('ajustes.updates.checkButton')}
+        </button>
+      </div>
+
+      {renderStatus()}
+    </div>
+  )
+}
+
 function AboutSection(): JSX.Element {
   const { t } = useTranslation()
   const [version, setVersion] = useState<string | null>(null)
@@ -668,6 +755,7 @@ export default function Ajustes(): JSX.Element {
       <ThemeSection />
       <BackupSection />
       <JsonBackupSection />
+      <UpdateSection />
       <AboutSection />
     </div>
   )

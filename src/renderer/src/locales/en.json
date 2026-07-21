@@ -83,7 +83,8 @@
     "invalidCurrency": "Invalid currency.",
     "invalidExchangeRate": "Exchange rate must be a number greater than zero.",
     "securityQuestionRequired": "Choose a question and write an answer.",
-    "securityAnswerIncorrect": "The answer is not correct."
+    "securityAnswerIncorrect": "The answer is not correct.",
+    "updaterDevMode": "Updates only work in the installed version of the app."
   },
   "auth": {
     "setupTitle": "Welcome",
@@ -314,6 +315,17 @@
       "importDesc": "Replaces <b>all</b> your current data with the data from a JSON file. The app will restart and this action cannot be undone.",
       "restoreButton": "Restore...",
       "confirmRestore": "Yes, replace my data"
+    },
+    "updates": {
+      "title": "Updates",
+      "desc": "Keep the app up to date with the latest improvements.",
+      "checkButton": "Check for updates",
+      "checking": "Checking for updates...",
+      "available": "A new version is available ({{version}}), downloading...",
+      "upToDate": "You're on the latest version.",
+      "downloading": "Downloading... {{percent}}%",
+      "ready": "Update ready ({{version}}).",
+      "installButton": "Restart and install"
     },
     "about": {
       "title": "About",

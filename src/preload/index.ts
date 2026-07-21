@@ -13,6 +13,7 @@ import type {
 } from '../shared/ledger'
 import type { NewRecurringTask, NewSubtask, NewTask, RecurringTask, Subtask, Task, UpdateTask } from '../shared/tasks'
 import type { PomodoroMode, PomodoroState } from '../shared/pomodoro'
+import type { UpdateStatus } from '../shared/updater'
 import type { NewReminder, Reminder, UpdateReminder } from '../shared/reminders'
 import type { NewNote, Note, UpdateNote } from '../shared/notes'
 import type {
@@ -168,6 +169,16 @@ const api = {
       const listener = (_event: unknown, mode: PomodoroMode): void => callback(mode)
       ipcRenderer.on('pomodoro:sessionEnded', listener)
       return () => ipcRenderer.removeListener('pomodoro:sessionEnded', listener)
+    }
+  },
+  updater: {
+    check: (): Promise<ActionResult> => ipcRenderer.invoke('updater:check'),
+    getStatus: (): Promise<UpdateStatus> => ipcRenderer.invoke('updater:getStatus'),
+    install: (): Promise<ActionResult> => ipcRenderer.invoke('updater:install'),
+    onStatus: (callback: (status: UpdateStatus) => void): (() => void) => {
+      const listener = (_event: unknown, status: UpdateStatus): void => callback(status)
+      ipcRenderer.on('updater:status', listener)
+      return () => ipcRenderer.removeListener('updater:status', listener)
     }
   }
 }

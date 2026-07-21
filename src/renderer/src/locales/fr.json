@@ -83,7 +83,8 @@
     "invalidCurrency": "Devise invalide.",
     "invalidExchangeRate": "Le taux de change doit être un nombre supérieur à zéro.",
     "securityQuestionRequired": "Choisissez une question et écrivez une réponse.",
-    "securityAnswerIncorrect": "La réponse n'est pas correcte."
+    "securityAnswerIncorrect": "La réponse n'est pas correcte.",
+    "updaterDevMode": "Les mises à jour ne fonctionnent que dans la version installée de l'application."
   },
   "auth": {
     "setupTitle": "Bienvenue",
@@ -314,6 +315,17 @@
       "importDesc": "Remplace <b>toutes</b> vos données actuelles par celles d'un fichier JSON. L'application redémarrera et cette action est irréversible.",
       "restoreButton": "Restaurer...",
       "confirmRestore": "Oui, remplacer mes données"
+    },
+    "updates": {
+      "title": "Mises à jour",
+      "desc": "Gardez l'application à jour avec les dernières améliorations.",
+      "checkButton": "Rechercher des mises à jour",
+      "checking": "Recherche de mises à jour...",
+      "available": "Une nouvelle version est disponible ({{version}}), téléchargement...",
+      "upToDate": "Vous avez la dernière version.",
+      "downloading": "Téléchargement... {{percent}}%",
+      "ready": "Mise à jour prête ({{version}}).",
+      "installButton": "Redémarrer et installer"
     },
     "about": {
       "title": "À propos",

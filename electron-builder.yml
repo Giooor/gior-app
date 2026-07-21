@@ -15,3 +15,7 @@ nsis:
   createDesktopShortcut: always
   createStartMenuShortcut: true
   shortcutName: GIOR - App Personal
+publish:
+  provider: github
+  owner: Giooor
+  repo: gior-app

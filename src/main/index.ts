@@ -2,6 +2,7 @@ import { app, dialog, shell, BrowserWindow, ipcMain, Menu, nativeImage, screen, 
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { getSetting, initDb, setSetting } from './db'
+import { initAutoUpdater } from './updater'
 import {
   backupFileName,
   exportBackupTo,
@@ -783,6 +784,7 @@ app.whenReady().then(async () => {
 
   createWindow()
   createTray()
+  if (mainWindow) initAutoUpdater(mainWindow)
 
   checkAndSendDailyNotifications(focusMainWindow)
   setInterval(() => checkAndSendDailyNotifications(focusMainWindow), 5 * 60 * 1000)
