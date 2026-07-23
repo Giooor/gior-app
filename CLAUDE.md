@@ -29,6 +29,17 @@ There is no `typecheck` or `test` script. **To verify TypeScript correctness aft
 
 **i18n**: locale files are `src/renderer/src/locales/{es,en,fr,pt}.json`. Any user-facing string change must be applied to all four files to stay in sync.
 
+## Releasing
+
+`npm run release` builds, packages, and publishes to GitHub Releases (`Giooor/gior-app`) via `electron-builder --publish always`. Installed apps auto-update through `electron-updater` (`src/main/updater.ts`), which checks the latest GitHub Release — auto-download and auto-install-on-quit are both enabled, so publishing a release pushes it to every already-installed device automatically. This only upgrades existing installs; a device with nothing installed still needs the first install done manually.
+
+Before running it:
+- Commit and push pending changes first (the release should correspond to what's on `main`).
+- Bump `version` in `package.json` (semver: minor for new features, patch for fixes only) — `electron-updater` only offers an update if the published version is higher than what's installed.
+- A `GH_TOKEN` (or `GITHUB_TOKEN`) env var with `repo`/`public_repo` scope must be set in the shell that runs the command, for electron-builder to publish. **Never ask the user to paste this token into chat** — it would persist in conversation history. Have the user set it in their own terminal and run the release themselves, or set it in a shell you invoke without ever printing its value.
+
+`electron-builder.yml`'s publish block sets `draft: false` — without it, electron-builder's GitHub publisher defaults to creating the release as a **draft**, which is invisible to both the public GitHub API and `electron-updater`'s update check, so installed apps silently find nothing to update to until someone manually clicks "Publish release" on GitHub.
+
 ## Conventions
 
 - No emojis anywhere in code or UI text.
