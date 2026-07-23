@@ -41,7 +41,8 @@ const STRINGS: Record<AppLanguage, Record<string, string>> = {
     sessionEndWorkTitle: '¡Sesión de enfoque terminada!',
     sessionEndWorkBody: 'Buen trabajo. Tómate un descanso de 5 minutos.',
     sessionEndBreakTitle: 'Descanso terminado',
-    sessionEndBreakBody: 'Hora de volver a enfocarte.'
+    sessionEndBreakBody: 'Hora de volver a enfocarte.',
+    recurringPaymentReminderTitle: 'Pagar: {{category}}'
   },
   en: {
     trayTooltip: 'GIOR - Personal App',
@@ -81,7 +82,8 @@ const STRINGS: Record<AppLanguage, Record<string, string>> = {
     sessionEndWorkTitle: 'Focus session finished!',
     sessionEndWorkBody: 'Great work. Take a 5-minute break.',
     sessionEndBreakTitle: 'Break finished',
-    sessionEndBreakBody: 'Time to focus again.'
+    sessionEndBreakBody: 'Time to focus again.',
+    recurringPaymentReminderTitle: 'Pay: {{category}}'
   },
   pt: {
     trayTooltip: 'GIOR - App Pessoal',
@@ -121,7 +123,8 @@ const STRINGS: Record<AppLanguage, Record<string, string>> = {
     sessionEndWorkTitle: 'Sessão de foco terminada!',
     sessionEndWorkBody: 'Bom trabalho. Faça uma pausa de 5 minutos.',
     sessionEndBreakTitle: 'Pausa terminada',
-    sessionEndBreakBody: 'Hora de focar novamente.'
+    sessionEndBreakBody: 'Hora de focar novamente.',
+    recurringPaymentReminderTitle: 'Pagar: {{category}}'
   },
   fr: {
     trayTooltip: 'GIOR - Application Personnelle',
@@ -161,7 +164,8 @@ const STRINGS: Record<AppLanguage, Record<string, string>> = {
     sessionEndWorkTitle: 'Session de concentration terminée !',
     sessionEndWorkBody: 'Bon travail. Prenez une pause de 5 minutes.',
     sessionEndBreakTitle: 'Pause terminée',
-    sessionEndBreakBody: 'Il est temps de se reconcentrer.'
+    sessionEndBreakBody: 'Il est temps de se reconcentrer.',
+    recurringPaymentReminderTitle: 'Payer : {{category}}'
   }
 }
 

@@ -64,7 +64,7 @@ export async function initDb(): Promise<void> {
       title TEXT NOT NULL,
       month INTEGER NOT NULL,
       day INTEGER NOT NULL,
-      type TEXT NOT NULL CHECK (type IN ('cumpleanos', 'aniversario', 'otro')),
+      type TEXT NOT NULL CHECK (type IN ('cumpleanos', 'aniversario', 'pago', 'otro')),
       notes TEXT NOT NULL DEFAULT ''
     );
   `)
@@ -153,6 +153,25 @@ export async function initDb(): Promise<void> {
   `)
 
   db.run(`
+    CREATE TABLE IF NOT EXISTS savings_goals (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      target_amount REAL NOT NULL,
+      currency TEXT NOT NULL DEFAULT 'COP',
+      target_date TEXT
+    );
+  `)
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS savings_contributions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      goal_id INTEGER NOT NULL,
+      amount REAL NOT NULL,
+      date TEXT NOT NULL
+    );
+  `)
+
+  db.run(`
     CREATE TABLE IF NOT EXISTS recurring_tasks (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
@@ -176,6 +195,8 @@ export async function initDb(): Promise<void> {
 
   migrateRecurringTasksFrequencyCheck(db)
   ensureColumn(db, 'recurring_tasks', 'weekdays_mask', 'weekdays_mask INTEGER')
+
+  migrateRemindersTypeCheck(db)
 
   ensureColumn(db, 'categories', 'icon', 'icon TEXT')
   ensureColumn(db, 'categories', 'color', 'color TEXT')
@@ -224,6 +245,32 @@ function migrateRecurringTasksFrequencyCheck(db: Database): void {
     SELECT id, title, frequency, weekday, active FROM recurring_tasks_old
   `)
   db.run('DROP TABLE recurring_tasks_old')
+}
+
+function migrateRemindersTypeCheck(db: Database): void {
+  const stmt = db.prepare("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'reminders'")
+  const sql = stmt.step() ? (stmt.getAsObject().sql as string) : ''
+  stmt.free()
+
+  if (!sql || sql.includes('pago')) return
+
+  db.run('ALTER TABLE reminders RENAME TO reminders_old')
+  db.run(`
+    CREATE TABLE reminders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      month INTEGER NOT NULL,
+      day INTEGER NOT NULL,
+      type TEXT NOT NULL CHECK (type IN ('cumpleanos', 'aniversario', 'pago', 'otro')),
+      notes TEXT NOT NULL DEFAULT '',
+      repeats INTEGER NOT NULL DEFAULT 1
+    );
+  `)
+  db.run(`
+    INSERT INTO reminders (id, title, month, day, type, notes, repeats)
+    SELECT id, title, month, day, type, notes, repeats FROM reminders_old
+  `)
+  db.run('DROP TABLE reminders_old')
 }
 
 function migrateCategoriesToGlobal(db: Database): void {

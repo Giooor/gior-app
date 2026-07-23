@@ -65,6 +65,8 @@ import {
   setPomodoroTask,
   startPomodoro
 } from './pomodoro'
+import { addSavingsContribution, addSavingsGoal, deleteSavingsGoal, listSavingsGoals } from './savings'
+import type { NewSavingsContribution, NewSavingsGoal } from '../shared/savings'
 import { addReminder, deleteReminder, listReminders, updateReminder } from './reminders'
 import { addNote, deleteNote, listNotes, toggleArchiveNote, togglePinNote, updateNote } from './notes'
 import { checkAndSendDailyNotifications } from './notifications'
@@ -678,6 +680,31 @@ app.whenReady().then(async () => {
   ipcMain.handle('recurringTransactions:delete', (_event, id: number) => {
     deleteRecurringTransaction(id)
     return { ok: true }
+  })
+
+  ipcMain.handle('savingsGoals:list', () => listSavingsGoals())
+
+  ipcMain.handle('savingsGoals:add', (_event, input: NewSavingsGoal) => {
+    try {
+      addSavingsGoal(input)
+      return { ok: true }
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'errors.generic' }
+    }
+  })
+
+  ipcMain.handle('savingsGoals:delete', (_event, id: number) => {
+    deleteSavingsGoal(id)
+    return { ok: true }
+  })
+
+  ipcMain.handle('savingsContributions:add', (_event, input: NewSavingsContribution) => {
+    try {
+      addSavingsContribution(input)
+      return { ok: true }
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'errors.generic' }
+    }
   })
 
   ipcMain.handle('tasks:list', (_event, date: string) => listTasks(date))

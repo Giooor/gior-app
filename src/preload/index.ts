@@ -17,6 +17,7 @@ import type { PomodoroMode, PomodoroState } from '../shared/pomodoro'
 import type { UpdateStatus } from '../shared/updater'
 import type { NewReminder, Reminder, UpdateReminder } from '../shared/reminders'
 import type { NewNote, Note, UpdateNote } from '../shared/notes'
+import type { NewSavingsContribution, NewSavingsGoal, SavingsGoal } from '../shared/savings'
 import type {
   MealPlanEntry,
   NewMealPlanEntry,
@@ -133,6 +134,15 @@ const api = {
       ipcRenderer.invoke('recurringTransactions:update', id, input),
     toggle: (id: number): Promise<ActionResult> => ipcRenderer.invoke('recurringTransactions:toggle', id),
     remove: (id: number): Promise<ActionResult> => ipcRenderer.invoke('recurringTransactions:delete', id)
+  },
+  savingsGoals: {
+    list: (): Promise<SavingsGoal[]> => ipcRenderer.invoke('savingsGoals:list'),
+    add: (input: NewSavingsGoal): Promise<ActionResult> => ipcRenderer.invoke('savingsGoals:add', input),
+    remove: (id: number): Promise<ActionResult> => ipcRenderer.invoke('savingsGoals:delete', id)
+  },
+  savingsContributions: {
+    add: (input: NewSavingsContribution): Promise<ActionResult> =>
+      ipcRenderer.invoke('savingsContributions:add', input)
   },
   tasks: {
     list: (date: string): Promise<Task[]> => ipcRenderer.invoke('tasks:list', date),

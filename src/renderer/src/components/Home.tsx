@@ -8,6 +8,7 @@ import {
   CalendarCheck,
   Check,
   Coffee,
+  ExternalLink,
   Moon,
   Pencil,
   Utensils
@@ -16,7 +17,14 @@ import { currency } from '../lib/currency'
 import type { ModuleKey } from '../lib/modules'
 import { TYPE_ICON, TYPE_LABEL_KEY } from '../lib/reminderTypes'
 import { currentLocale, formatWeekdayMonthDay, formatMonthLong, capitalize } from '../lib/dateFormat'
-import { daysUntilReminder, isReminderPast, monthName, reminderOccurrenceDate, weekdayName } from '../../../shared/reminders'
+import {
+  daysUntilReminder,
+  extractUrl,
+  isReminderPast,
+  monthName,
+  reminderOccurrenceDate,
+  weekdayName
+} from '../../../shared/reminders'
 import { MEAL_TYPES, MEAL_TYPE_LABEL_KEY } from '../../../shared/recipes'
 import { shiftMonth, toLocalIso, todayIso } from '../../../shared/date'
 import CategoryBadge from './contabilidad/CategoryBadge'
@@ -40,6 +48,15 @@ interface Props {
 interface DayActivity {
   date: string
   completed: number
+  focusedSeconds: number
+}
+
+function formatDuration(totalSeconds: number): string {
+  const totalMinutes = Math.round(totalSeconds / 60)
+  if (totalMinutes < 60) return `${totalMinutes} min`
+  const hours = Math.floor(totalMinutes / 60)
+  const minutes = totalMinutes % 60
+  return minutes > 0 ? `${hours}h ${minutes}min` : `${hours}h`
 }
 
 interface MonthFinance {
@@ -134,7 +151,11 @@ export default function Home({ onNavigate }: Props): JSX.Element {
     const days = last7Days()
     Promise.all(days.map((d) => window.api.tasks.list(d))).then((results) => {
       setWeekActivity(
-        days.map((d, i) => ({ date: d, completed: results[i].filter((t) => t.completed).length }))
+        days.map((d, i) => ({
+          date: d,
+          completed: results[i].filter((t) => t.completed).length,
+          focusedSeconds: results[i].reduce((sum, t) => sum + t.focusedSeconds, 0)
+        }))
       )
     })
   }, [])
@@ -248,6 +269,19 @@ export default function Home({ onNavigate }: Props): JSX.Element {
                 {capitalize(weekdayName(reminderOccurrenceDate(nearestReminder).getDay(), locale))}{' '}
                 {t('common.dayMonth', { day: nearestReminder.day, month: monthName(nearestReminder.month, locale) })}
               </span>
+              {extractUrl(nearestReminder.notes) && (
+                <button
+                  type="button"
+                  className="reminder-pay-link"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    window.open(extractUrl(nearestReminder.notes) as string, '_blank', 'noopener,noreferrer')
+                  }}
+                >
+                  <ExternalLink size={12} strokeWidth={1.75} />
+                  {t('reminders.payNow')}
+                </button>
+              )}
             </div>
             <div className="reminder-hero-countdown">
               <span className="reminder-hero-countdown-value">
@@ -322,6 +356,13 @@ export default function Home({ onNavigate }: Props): JSX.Element {
               <p className="home-chart-summary">
                 {t('home.weekSummary', { count: weekActivity.reduce((sum, d) => sum + d.completed, 0) })}
               </p>
+              {weekActivity.some((d) => d.focusedSeconds > 0) && (
+                <p className="home-chart-summary home-chart-summary-secondary">
+                  {t('home.weekFocusedTime', {
+                    duration: formatDuration(weekActivity.reduce((sum, d) => sum + d.focusedSeconds, 0))
+                  })}
+                </p>
+              )}
             </>
           )}
         </div>

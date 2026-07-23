@@ -2,7 +2,7 @@ import { getDb, persistDb } from './db'
 import { daysInMonth } from '../shared/reminders'
 import type { NewReminder, Reminder, ReminderType, UpdateReminder } from '../shared/reminders'
 
-const VALID_TYPES: ReminderType[] = ['cumpleanos', 'aniversario', 'otro']
+const VALID_TYPES: ReminderType[] = ['cumpleanos', 'aniversario', 'pago', 'otro']
 
 function validate(input: { title: string; month: number; day: number; type: ReminderType }): string {
   if (!input.title.trim()) return 'errors.titleRequired'

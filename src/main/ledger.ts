@@ -1,5 +1,7 @@
 import { getDb, getSetting, persistDb, setSetting } from './db'
 import { upsertCategory } from './categories'
+import { addReminder } from './reminders'
+import { mt } from './i18n'
 import { todayIso } from '../shared/date'
 import { DEFAULT_USD_TO_COP_RATE, TRANSACTION_CURRENCIES } from '../shared/ledger'
 import type {
@@ -211,6 +213,7 @@ export function generateDueRecurringTransactions(): void {
   const db = getDb()
   const today = todayIso()
   const currentMonth = today.slice(0, 7)
+  const todayDate = new Date(`${today}T00:00:00`)
 
   const rules = listRecurringTransactions().filter((r) => r.active)
   let generated = false
@@ -226,6 +229,17 @@ export function generateDueRecurringTransactions(): void {
     if (!alreadyGenerated) {
       insertTransaction(today, rule.type, rule.category, rule.description, rule.amount, rule.currency, rule.id)
       generated = true
+
+      if (rule.type === 'gasto' && rule.paymentUrl) {
+        addReminder({
+          title: mt('recurringPaymentReminderTitle', { category: rule.category }),
+          month: todayDate.getMonth() + 1,
+          day: todayDate.getDate(),
+          type: 'pago',
+          notes: rule.paymentUrl,
+          repeats: false
+        })
+      }
     }
   }
 

@@ -1,9 +1,10 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pencil, PartyPopper, Plus, Repeat, Trash2 } from 'lucide-react'
+import { ExternalLink, Pencil, PartyPopper, Plus, Repeat, Trash2 } from 'lucide-react'
 import {
   daysInMonth,
   daysUntilReminder,
+  extractUrl,
   isReminderPast,
   monthName,
   reminderOccurrenceDate,
@@ -386,7 +387,19 @@ export default function Recordatorios(): JSX.Element {
                     <Icon size={14} strokeWidth={1.75} className="reminder-item-type-icon" />
                     <span className="reminder-item-title">{r.title}</span>
                   </div>
-                  {r.notes && <p className="reminder-item-notes">{r.notes}</p>}
+                  {r.notes &&
+                    (extractUrl(r.notes) ? (
+                      <button
+                        type="button"
+                        className="reminder-pay-link"
+                        onClick={() => window.open(extractUrl(r.notes) as string, '_blank', 'noopener,noreferrer')}
+                      >
+                        <ExternalLink size={12} strokeWidth={1.75} />
+                        {t('reminders.payNow')}
+                      </button>
+                    ) : (
+                      <p className="reminder-item-notes">{r.notes}</p>
+                    ))}
                   <span className="reminder-item-meta">
                     {past
                       ? t('reminders.pastNoRepeat')

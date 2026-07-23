@@ -1,6 +1,6 @@
 {
   "name": "gior-app",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Aplicacion personal local: tareas y pomodoro, recordatorios, recetas, notas y contabilidad",
   "private": true,
   "type": "module",

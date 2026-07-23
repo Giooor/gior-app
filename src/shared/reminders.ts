@@ -1,4 +1,4 @@
-export type ReminderType = 'cumpleanos' | 'aniversario' | 'otro'
+export type ReminderType = 'cumpleanos' | 'aniversario' | 'pago' | 'otro'
 
 export interface Reminder {
   id: number
@@ -85,4 +85,10 @@ export function daysUntilReminder(reminder: ReminderOccurrenceInput, from: Date 
   const today = new Date(from.getFullYear(), from.getMonth(), from.getDate())
   const target = reminderOccurrenceDate(reminder, from)
   return Math.round((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
+}
+
+const URL_PATTERN = /https?:\/\/\S+/
+
+export function extractUrl(notes: string): string | null {
+  return URL_PATTERN.exec(notes)?.[0] ?? null
 }

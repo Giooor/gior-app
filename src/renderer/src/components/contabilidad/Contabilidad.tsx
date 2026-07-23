@@ -20,6 +20,8 @@ import { currency, formatByCurrency } from '../../lib/currency'
 import RecurringTransactions from './RecurringTransactions'
 import ContabilidadSettingsPanel from './ContabilidadSettingsPanel'
 import CategoryBudgets from './CategoryBudgets'
+import BudgetHistory from './BudgetHistory'
+import SavingsGoals from './SavingsGoals'
 import ExpenseCategoryChart from './ExpenseCategoryChart'
 import CategoryBadge from './CategoryBadge'
 import { currentLocale, capitalize } from '../../lib/dateFormat'
@@ -59,6 +61,7 @@ export default function Contabilidad(): JSX.Element {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [statsOpen, setStatsOpen] = useState(true)
 
   const [exchangeRate, setExchangeRate] = useState(DEFAULT_USD_TO_COP_RATE)
 
@@ -470,122 +473,6 @@ export default function Contabilidad(): JSX.Element {
         </div>
       </div>
 
-      {!showAllHistory && (goal || monthFilter === currentMonth()) && (
-        <div className="goal-section">
-          {!goal || editingGoal ? (
-            <form className="goal-prompt" onSubmit={handleGoalSubmit}>
-              <div className="goal-prompt-icon">
-                <Target size={22} strokeWidth={1.75} />
-              </div>
-              <div className="goal-prompt-body">
-                <span className="goal-prompt-title">
-                  {goal
-                    ? t('ledger.goalTitleEdit', { month: formatHeaderMonth(monthFilter) })
-                    : t('ledger.goalTitleNew', { month: formatHeaderMonth(monthFilter) })}
-                </span>
-                <p className="goal-prompt-desc">{t('ledger.goalDesc')}</p>
-                <div className="goal-prompt-fields">
-                  <div className="field">
-                    <label htmlFor="income-goal">{t('ledger.expectedIncome')}</label>
-                    <input
-                      id="income-goal"
-                      type="number"
-                      min="0"
-                      step="1000"
-                      placeholder="0"
-                      value={incomeGoalInput}
-                      onChange={(e) => setIncomeGoalInput(e.target.value)}
-                    />
-                  </div>
-                  <div className="field">
-                    <label htmlFor="expense-goal">{t('ledger.expenseLimit')}</label>
-                    <input
-                      id="expense-goal"
-                      type="number"
-                      min="0"
-                      step="1000"
-                      placeholder="0"
-                      value={expenseGoalInput}
-                      onChange={(e) => setExpenseGoalInput(e.target.value)}
-                    />
-                  </div>
-                  <button type="submit" className="ledger-submit">
-                    {t('ledger.saveGoal')}
-                  </button>
-                  {goal && (
-                    <button type="button" className="pill-button" onClick={() => setEditingGoal(false)}>
-                      {t('common.cancel')}
-                    </button>
-                  )}
-                </div>
-                {goalError && <p className="error">{goalError}</p>}
-              </div>
-            </form>
-          ) : (
-            <div className="goal-card">
-              <div className="goal-card-header">
-                <span className="goal-card-title">
-                  <Target size={15} strokeWidth={1.75} />
-                  {t('ledger.monthGoalTitle')}
-                </span>
-                <button type="button" className="icon-button" onClick={startEditGoal} aria-label={t('ledger.editGoalAria')}>
-                  <Pencil size={14} strokeWidth={1.75} />
-                </button>
-              </div>
-
-              <div className="goal-row">
-                <div className="goal-row-header">
-                  <span className="goal-label">{t('ledger.income')}</span>
-                  <span className="goal-values">
-                    {t('ledger.progressOfGoal', {
-                      amount: currency.format(monthIngresos),
-                      goal: currency.format(goal.incomeGoal)
-                    })}
-                  </span>
-                </div>
-                <div className="goal-track-row">
-                  <div className="goal-track">
-                    <div className="goal-fill goal-fill-income" style={{ width: `${Math.min(100, incomePct)}%` }} />
-                  </div>
-                  <span className={`goal-status${incomePct >= 100 ? ' goal-status-success' : ''}`}>
-                    {incomePct >= 100 ? t('ledger.goalMet') : `${Math.round(incomePct)}%`}
-                  </span>
-                </div>
-              </div>
-
-              <div className="goal-row">
-                <div className="goal-row-header">
-                  <span className="goal-label">{t('ledger.expenses')}</span>
-                  <span className="goal-values">
-                    {t('ledger.progressOfGoal', {
-                      amount: currency.format(monthGastos),
-                      goal: currency.format(goal.expenseGoal)
-                    })}
-                  </span>
-                </div>
-                <div className="goal-track-row">
-                  <div className="goal-track">
-                    <div
-                      className={`goal-fill${expensePct > 100 ? ' goal-fill-danger' : ' goal-fill-expense'}`}
-                      style={{ width: `${Math.min(100, expensePct)}%` }}
-                    />
-                  </div>
-                  <span className={`goal-status${expensePct > 100 ? ' goal-status-danger' : ''}`}>
-                    {expensePct > 100 ? t('ledger.goalExceeded') : `${Math.round(expensePct)}%`}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      <ExpenseCategoryChart categories={categories} monthTransactions={monthTransactions} exchangeRate={exchangeRate} />
-
-      {!showAllHistory && (
-        <CategoryBudgets categories={categories} monthTransactions={monthTransactions} exchangeRate={exchangeRate} />
-      )}
-
       <form className="ledger-form" onSubmit={handleSubmit}>
         <div className="ledger-form-row">
           <div className="field">
@@ -943,6 +830,136 @@ export default function Contabilidad(): JSX.Element {
               )}
             </tbody>
           </table>
+        )}
+      </div>
+
+      <div className="stats-panel">
+        <button type="button" className="recurring-toggle" onClick={() => setStatsOpen((o) => !o)}>
+          {statsOpen ? '▾' : '▸'} {t('ledger.statsToggle')}
+        </button>
+
+        {statsOpen && (
+          <div className="stats-body">
+            {!showAllHistory && (goal || monthFilter === currentMonth()) && (
+              <div className="goal-section">
+                {!goal || editingGoal ? (
+                  <form className="goal-prompt" onSubmit={handleGoalSubmit}>
+                    <div className="goal-prompt-icon">
+                      <Target size={22} strokeWidth={1.75} />
+                    </div>
+                    <div className="goal-prompt-body">
+                      <span className="goal-prompt-title">
+                        {goal
+                          ? t('ledger.goalTitleEdit', { month: formatHeaderMonth(monthFilter) })
+                          : t('ledger.goalTitleNew', { month: formatHeaderMonth(monthFilter) })}
+                      </span>
+                      <p className="goal-prompt-desc">{t('ledger.goalDesc')}</p>
+                      <div className="goal-prompt-fields">
+                        <div className="field">
+                          <label htmlFor="income-goal">{t('ledger.expectedIncome')}</label>
+                          <input
+                            id="income-goal"
+                            type="number"
+                            min="0"
+                            step="1000"
+                            placeholder="0"
+                            value={incomeGoalInput}
+                            onChange={(e) => setIncomeGoalInput(e.target.value)}
+                          />
+                        </div>
+                        <div className="field">
+                          <label htmlFor="expense-goal">{t('ledger.expenseLimit')}</label>
+                          <input
+                            id="expense-goal"
+                            type="number"
+                            min="0"
+                            step="1000"
+                            placeholder="0"
+                            value={expenseGoalInput}
+                            onChange={(e) => setExpenseGoalInput(e.target.value)}
+                          />
+                        </div>
+                        <button type="submit" className="ledger-submit">
+                          {t('ledger.saveGoal')}
+                        </button>
+                        {goal && (
+                          <button type="button" className="pill-button" onClick={() => setEditingGoal(false)}>
+                            {t('common.cancel')}
+                          </button>
+                        )}
+                      </div>
+                      {goalError && <p className="error">{goalError}</p>}
+                    </div>
+                  </form>
+                ) : (
+                  <div className="goal-card">
+                    <div className="goal-card-header">
+                      <span className="goal-card-title">
+                        <Target size={15} strokeWidth={1.75} />
+                        {t('ledger.monthGoalTitle')}
+                      </span>
+                      <button type="button" className="icon-button" onClick={startEditGoal} aria-label={t('ledger.editGoalAria')}>
+                        <Pencil size={14} strokeWidth={1.75} />
+                      </button>
+                    </div>
+
+                    <div className="goal-row">
+                      <div className="goal-row-header">
+                        <span className="goal-label">{t('ledger.income')}</span>
+                        <span className="goal-values">
+                          {t('ledger.progressOfGoal', {
+                            amount: currency.format(monthIngresos),
+                            goal: currency.format(goal.incomeGoal)
+                          })}
+                        </span>
+                      </div>
+                      <div className="goal-track-row">
+                        <div className="goal-track">
+                          <div className="goal-fill goal-fill-income" style={{ width: `${Math.min(100, incomePct)}%` }} />
+                        </div>
+                        <span className={`goal-status${incomePct >= 100 ? ' goal-status-success' : ''}`}>
+                          {incomePct >= 100 ? t('ledger.goalMet') : `${Math.round(incomePct)}%`}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="goal-row">
+                      <div className="goal-row-header">
+                        <span className="goal-label">{t('ledger.expenses')}</span>
+                        <span className="goal-values">
+                          {t('ledger.progressOfGoal', {
+                            amount: currency.format(monthGastos),
+                            goal: currency.format(goal.expenseGoal)
+                          })}
+                        </span>
+                      </div>
+                      <div className="goal-track-row">
+                        <div className="goal-track">
+                          <div
+                            className={`goal-fill${expensePct > 100 ? ' goal-fill-danger' : ' goal-fill-expense'}`}
+                            style={{ width: `${Math.min(100, expensePct)}%` }}
+                          />
+                        </div>
+                        <span className={`goal-status${expensePct > 100 ? ' goal-status-danger' : ''}`}>
+                          {expensePct > 100 ? t('ledger.goalExceeded') : `${Math.round(expensePct)}%`}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <ExpenseCategoryChart categories={categories} monthTransactions={monthTransactions} exchangeRate={exchangeRate} />
+
+            {!showAllHistory && (
+              <CategoryBudgets categories={categories} monthTransactions={monthTransactions} exchangeRate={exchangeRate} />
+            )}
+
+            <BudgetHistory categories={categories} transactions={transactions} exchangeRate={exchangeRate} />
+
+            <SavingsGoals />
+          </div>
         )}
       </div>
 

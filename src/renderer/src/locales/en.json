@@ -140,6 +140,7 @@
     "taskCompletedTooltip_other": "{{count}} tasks completed",
     "weekSummary_one": "{{count}} task completed in the last 7 days",
     "weekSummary_other": "{{count}} tasks completed in the last 7 days",
+    "weekFocusedTime": "{{duration}} of focused time this week",
     "financeTitle": "{{month}} finances",
     "income": "Income",
     "expenses": "Expenses",
@@ -153,6 +154,7 @@
     "types": {
       "cumpleanos": "Birthday",
       "aniversario": "Anniversary",
+      "pago": "Payment",
       "otro": "Reminder"
     },
     "pageTitle": "Reminders",
@@ -170,6 +172,7 @@
     "past": "Past",
     "pastNoRepeat": "Past · doesn't repeat",
     "noRepeatSuffix": "{{type}} · doesn't repeat",
+    "payNow": "Pay now",
     "nextYear": "{{month}} next year",
     "inDays": "In {{n}} days",
     "titleRequired": "Enter a title."
@@ -383,6 +386,7 @@
     "currentMonth": "Current month",
     "allHistorySuffix": "· Full history",
     "pageTitle": "Finances",
+    "statsToggle": "Summary & stats",
     "income": "Income",
     "expenses": "Expenses",
     "balance": "Balance",
@@ -511,6 +515,24 @@
       "spentOf": "{{spent}} of {{budget}}",
       "nearLimit": "Near the limit",
       "overBudget": "Over by {{amount}}"
+    },
+    "budgetHistory": {
+      "title": "Budget vs. actual spend (last 6 months)",
+      "budgeted": "Budgeted",
+      "actual": "Actual spend"
+    },
+    "savings": {
+      "title": "Savings goals",
+      "addAria": "Add savings goal",
+      "titlePlaceholder": "Goal name",
+      "targetPlaceholder": "Target amount",
+      "targetDateAria": "Target date (optional)",
+      "targetDateLabel": "Target: {{date}}",
+      "contributePlaceholder": "Contribution",
+      "contributeButton": "Add",
+      "deleteAria": "Delete goal",
+      "reached": "Goal reached!",
+      "emptyState": "You don't have any savings goals set up yet."
     }
   },
   "recipes": {

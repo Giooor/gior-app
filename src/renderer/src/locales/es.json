@@ -140,6 +140,7 @@
     "taskCompletedTooltip_other": "{{count}} tareas completadas",
     "weekSummary_one": "{{count}} tarea completada en los últimos 7 días",
     "weekSummary_other": "{{count}} tareas completadas en los últimos 7 días",
+    "weekFocusedTime": "{{duration}} de tiempo enfocado esta semana",
     "financeTitle": "Finanzas de {{month}}",
     "income": "Ingresos",
     "expenses": "Gastos",
@@ -153,6 +154,7 @@
     "types": {
       "cumpleanos": "Cumpleaños",
       "aniversario": "Aniversario",
+      "pago": "Pago",
       "otro": "Recordatorio"
     },
     "pageTitle": "Recordatorios",
@@ -170,6 +172,7 @@
     "past": "Ya pasó",
     "pastNoRepeat": "Ya pasó · no se repite",
     "noRepeatSuffix": "{{type}} · no se repite",
+    "payNow": "Pagar ahora",
     "nextYear": "{{month}} próximo año",
     "inDays": "En {{n}} días",
     "titleRequired": "Ingresa un título."
@@ -383,6 +386,7 @@
     "currentMonth": "Mes actual",
     "allHistorySuffix": "· Todo el historial",
     "pageTitle": "Contabilidad",
+    "statsToggle": "Resumen y estadísticas",
     "income": "Ingresos",
     "expenses": "Gastos",
     "balance": "Balance",
@@ -511,6 +515,24 @@
       "spentOf": "{{spent}} de {{budget}}",
       "nearLimit": "Cerca del límite",
       "overBudget": "Superado por {{amount}}"
+    },
+    "budgetHistory": {
+      "title": "Presupuesto vs. gasto real (últimos 6 meses)",
+      "budgeted": "Presupuestado",
+      "actual": "Gasto real"
+    },
+    "savings": {
+      "title": "Metas de ahorro",
+      "addAria": "Agregar meta de ahorro",
+      "titlePlaceholder": "Nombre de la meta",
+      "targetPlaceholder": "Monto objetivo",
+      "targetDateAria": "Fecha objetivo (opcional)",
+      "targetDateLabel": "Meta: {{date}}",
+      "contributePlaceholder": "Aporte",
+      "contributeButton": "Aportar",
+      "deleteAria": "Eliminar meta",
+      "reached": "¡Meta alcanzada!",
+      "emptyState": "Aún no tienes metas de ahorro configuradas."
     }
   },
   "recipes": {

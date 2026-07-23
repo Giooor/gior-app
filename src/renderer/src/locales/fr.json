@@ -140,6 +140,7 @@
     "taskCompletedTooltip_other": "{{count}} tâches terminées",
     "weekSummary_one": "{{count}} tâche terminée au cours des 7 derniers jours",
     "weekSummary_other": "{{count}} tâches terminées au cours des 7 derniers jours",
+    "weekFocusedTime": "{{duration}} de temps de concentration cette semaine",
     "financeTitle": "Finances de {{month}}",
     "income": "Revenus",
     "expenses": "Dépenses",
@@ -153,6 +154,7 @@
     "types": {
       "cumpleanos": "Anniversaire",
       "aniversario": "Anniversaire de mariage",
+      "pago": "Paiement",
       "otro": "Rappel"
     },
     "pageTitle": "Rappels",
@@ -170,6 +172,7 @@
     "past": "Passé",
     "pastNoRepeat": "Passé · ne se répète pas",
     "noRepeatSuffix": "{{type}} · ne se répète pas",
+    "payNow": "Payer maintenant",
     "nextYear": "{{month}} l'année prochaine",
     "inDays": "Dans {{n}} jours",
     "titleRequired": "Entrez un titre."
@@ -383,6 +386,7 @@
     "currentMonth": "Mois actuel",
     "allHistorySuffix": "· Tout l'historique",
     "pageTitle": "Finances",
+    "statsToggle": "Résumé et statistiques",
     "income": "Revenus",
     "expenses": "Dépenses",
     "balance": "Solde",
@@ -511,6 +515,24 @@
       "spentOf": "{{spent}} sur {{budget}}",
       "nearLimit": "Proche de la limite",
       "overBudget": "Dépassé de {{amount}}"
+    },
+    "budgetHistory": {
+      "title": "Budget vs. dépenses réelles (6 derniers mois)",
+      "budgeted": "Budgété",
+      "actual": "Dépenses réelles"
+    },
+    "savings": {
+      "title": "Objectifs d'épargne",
+      "addAria": "Ajouter un objectif d'épargne",
+      "titlePlaceholder": "Nom de l'objectif",
+      "targetPlaceholder": "Montant cible",
+      "targetDateAria": "Date cible (optionnel)",
+      "targetDateLabel": "Objectif : {{date}}",
+      "contributePlaceholder": "Contribution",
+      "contributeButton": "Ajouter",
+      "deleteAria": "Supprimer l'objectif",
+      "reached": "Objectif atteint !",
+      "emptyState": "Vous n'avez pas encore d'objectifs d'épargne configurés."
     }
   },
   "recipes": {
