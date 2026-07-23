@@ -10,8 +10,14 @@ import type {
   Transaction,
   TransactionCurrency,
   TransactionType,
+  UpdateRecurringTransaction,
   UpdateTransaction
 } from '../shared/ledger'
+
+function normalizePaymentUrl(value: string | null | undefined): string | null {
+  const trimmed = value?.trim()
+  return trimmed ? trimmed : null
+}
 
 function validateTransaction(input: {
   date: string
@@ -117,7 +123,7 @@ export function deleteTransaction(id: number): void {
 export function listRecurringTransactions(): RecurringTransaction[] {
   const db = getDb()
   const stmt = db.prepare(
-    'SELECT id, type, category, description, amount, currency, active FROM recurring_transactions ORDER BY id ASC'
+    'SELECT id, type, category, description, amount, currency, active, payment_url FROM recurring_transactions ORDER BY id ASC'
   )
 
   const rows: RecurringTransaction[] = []
@@ -130,14 +136,15 @@ export function listRecurringTransactions(): RecurringTransaction[] {
       description: row.description as string,
       amount: row.amount as number,
       currency: row.currency as TransactionCurrency,
-      active: Boolean(row.active)
+      active: Boolean(row.active),
+      paymentUrl: (row.payment_url as string | null) ?? null
     })
   }
   stmt.free()
   return rows
 }
 
-export function addRecurringTransaction(input: NewRecurringTransaction): void {
+function validateRecurringTransaction(input: NewRecurringTransaction): void {
   if (!input.category?.trim() || !Number.isFinite(input.amount) || input.amount <= 0) {
     throw new Error('errors.invalidRecurringTransactionData')
   }
@@ -147,18 +154,44 @@ export function addRecurringTransaction(input: NewRecurringTransaction): void {
   if (!(TRANSACTION_CURRENCIES as readonly string[]).includes(input.currency)) {
     throw new Error('errors.invalidCurrency')
   }
+}
+
+export function addRecurringTransaction(input: NewRecurringTransaction): void {
+  validateRecurringTransaction(input)
 
   const category = input.category.trim()
   upsertCategory(category)
 
   getDb().run(
-    'INSERT INTO recurring_transactions (type, category, description, amount, currency, active) VALUES (:type, :category, :description, :amount, :currency, 1)',
+    'INSERT INTO recurring_transactions (type, category, description, amount, currency, payment_url, active) VALUES (:type, :category, :description, :amount, :currency, :paymentUrl, 1)',
     {
       ':type': input.type,
       ':category': category,
       ':description': input.description?.trim() ?? '',
       ':amount': input.amount,
-      ':currency': input.currency
+      ':currency': input.currency,
+      ':paymentUrl': normalizePaymentUrl(input.paymentUrl)
+    }
+  )
+  persistDb()
+}
+
+export function updateRecurringTransaction(id: number, input: UpdateRecurringTransaction): void {
+  validateRecurringTransaction(input)
+
+  const category = input.category.trim()
+  upsertCategory(category)
+
+  getDb().run(
+    'UPDATE recurring_transactions SET type = :type, category = :category, description = :description, amount = :amount, currency = :currency, payment_url = :paymentUrl WHERE id = :id',
+    {
+      ':type': input.type,
+      ':category': category,
+      ':description': input.description?.trim() ?? '',
+      ':amount': input.amount,
+      ':currency': input.currency,
+      ':paymentUrl': normalizePaymentUrl(input.paymentUrl),
+      ':id': id
     }
   )
   persistDb()

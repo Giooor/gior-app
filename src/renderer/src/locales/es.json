@@ -450,8 +450,11 @@
       "categoryPlaceholder": "Categoría...",
       "descriptionPlaceholder": "Descripción (opcional)",
       "amountPlaceholder": "Monto",
+      "paymentUrlPlaceholder": "Link de pago (opcional)",
       "emptyState": "No tienes transacciones recurrentes configuradas.",
       "deleteAria": "Eliminar recurrente",
+      "editAria": "Editar recurrente",
+      "payAria": "Pagar en línea",
       "hint": "Se generan automáticamente una vez al mes, la primera vez que abras la app."
     },
     "categoryManager": {
@@ -486,12 +489,20 @@
         "moreHorizontal": "Otro"
       },
       "color": {
-        "indigo": "Índigo",
-        "rose": "Rosa",
+        "red": "Rojo",
+        "orange": "Naranja",
         "amber": "Ámbar",
+        "yellow": "Amarillo",
+        "lime": "Lima",
         "emerald": "Esmeralda",
+        "teal": "Verde azulado",
+        "cyan": "Cian",
         "sky": "Cielo",
+        "blue": "Azul",
+        "indigo": "Índigo",
         "violet": "Violeta",
+        "fuchsia": "Fucsia",
+        "rose": "Rosa",
         "slate": "Pizarra"
       }
     },

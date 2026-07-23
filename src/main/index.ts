@@ -36,6 +36,7 @@ import {
   setExchangeRate,
   setMonthlyGoal,
   toggleRecurringTransaction,
+  updateRecurringTransaction,
   updateTransaction
 } from './ledger'
 import { addCategory, deleteCategory, ensureDefaultCategories, listCategories, updateCategory } from './categories'
@@ -89,6 +90,7 @@ import type {
   NewTransaction,
   ReportPeriod,
   UpdateCategory,
+  UpdateRecurringTransaction,
   UpdateTransaction
 } from '../shared/ledger'
 import type { NewRecurringTask, NewSubtask, NewTask, UpdateTask } from '../shared/tasks'
@@ -659,6 +661,15 @@ app.whenReady().then(async () => {
     }
   })
 
+  ipcMain.handle('recurringTransactions:update', (_event, id: number, input: UpdateRecurringTransaction) => {
+    try {
+      updateRecurringTransaction(id, input)
+      return { ok: true }
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'errors.generic' }
+    }
+  })
+
   ipcMain.handle('recurringTransactions:toggle', (_event, id: number) => {
     toggleRecurringTransaction(id)
     return { ok: true }
@@ -796,6 +807,7 @@ app.whenReady().then(async () => {
 
 app.on('before-quit', () => {
   isQuitting = true
+  pausePomodoro()
 })
 
 app.on('window-all-closed', () => {

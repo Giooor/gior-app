@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Check } from 'lucide-react'
 
@@ -12,10 +12,12 @@ export default function ExchangeRateSettings({ exchangeRate, onExchangeRateChang
   const [value, setValue] = useState(String(exchangeRate))
   const [error, setError] = useState('')
   const [saved, setSaved] = useState(false)
+  const [prevExchangeRate, setPrevExchangeRate] = useState(exchangeRate)
 
-  useEffect(() => {
+  if (exchangeRate !== prevExchangeRate) {
+    setPrevExchangeRate(exchangeRate)
     setValue(String(exchangeRate))
-  }, [exchangeRate])
+  }
 
   async function handleSubmit(e: FormEvent): Promise<void> {
     e.preventDefault()

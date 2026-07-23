@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react'
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   CalendarCheck,
@@ -84,6 +84,22 @@ export default function Tareas(): JSX.Element {
 
   useEffect(() => {
     loadTasks()
+  }, [date])
+
+  const pomodoroPrevRef = useRef<{ linkedTaskId: number | null; isRunning: boolean } | null>(null)
+
+  useEffect(() => {
+    const unsubscribe = window.api.pomodoro.onState((state) => {
+      const prev = pomodoroPrevRef.current
+      pomodoroPrevRef.current = { linkedTaskId: state.linkedTaskId, isRunning: state.isRunning }
+      if (!prev) return
+      const taskChanged = prev.linkedTaskId !== state.linkedTaskId
+      const justStopped = prev.isRunning && !state.isRunning
+      if (taskChanged || justStopped) {
+        loadTasks(false)
+      }
+    })
+    return unsubscribe
   }, [date])
 
   async function loadTasks(showLoading = true): Promise<void> {

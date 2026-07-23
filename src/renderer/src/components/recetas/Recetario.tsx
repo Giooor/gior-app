@@ -62,6 +62,8 @@ export default function Recetario({ focusRecipeId, onFocusHandled }: Props): JSX
     if (focusRecipeId == null) return
     if (!recipes.some((r) => r.id === focusRecipeId)) return
 
+    // Synchronizes with the DOM (scrollIntoView) and an external callback, not pure derived state.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setExpandedId(focusRecipeId)
     setCategoryFilter('')
     document.getElementById(`recipe-${focusRecipeId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })

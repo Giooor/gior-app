@@ -107,13 +107,17 @@ export default function Contabilidad(): JSX.Element {
   }, [])
 
   useEffect(() => {
-    setEditingGoal(false)
     window.api.ledger.getGoal(monthFilter).then((g) => {
       setGoal(g)
       setIncomeGoalInput(g ? String(g.incomeGoal) : '')
       setExpenseGoalInput(g ? String(g.expenseGoal) : '')
     })
   }, [monthFilter])
+
+  function changeMonthFilter(value: string): void {
+    setEditingGoal(false)
+    setMonthFilter(value)
+  }
 
   async function loadTransactions(): Promise<void> {
     setLoading(true)
@@ -377,7 +381,7 @@ export default function Contabilidad(): JSX.Element {
         <button
           type="button"
           className="date-nav-button"
-          onClick={() => setMonthFilter(shiftMonth(monthFilter, -1))}
+          onClick={() => changeMonthFilter(shiftMonth(monthFilter, -1))}
           disabled={showAllHistory}
           aria-label={t('ledger.prevMonthAria')}
         >
@@ -389,14 +393,14 @@ export default function Contabilidad(): JSX.Element {
         <button
           type="button"
           className="date-nav-button"
-          onClick={() => setMonthFilter(shiftMonth(monthFilter, 1))}
+          onClick={() => changeMonthFilter(shiftMonth(monthFilter, 1))}
           disabled={showAllHistory || monthFilter >= currentMonth()}
           aria-label={t('ledger.nextMonthAria')}
         >
           <ChevronRight size={18} strokeWidth={1.75} />
         </button>
         {!showAllHistory && monthFilter !== currentMonth() && (
-          <button type="button" className="pill-button pill-button-accent" onClick={() => setMonthFilter(currentMonth())}>
+          <button type="button" className="pill-button pill-button-accent" onClick={() => changeMonthFilter(currentMonth())}>
             {t('ledger.currentMonth')}
           </button>
         )}

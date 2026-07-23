@@ -9,6 +9,7 @@ import type {
   ReportPeriod,
   Transaction,
   UpdateCategory,
+  UpdateRecurringTransaction,
   UpdateTransaction
 } from '../shared/ledger'
 import type { NewRecurringTask, NewSubtask, NewTask, RecurringTask, Subtask, Task, UpdateTask } from '../shared/tasks'
@@ -128,6 +129,8 @@ const api = {
     list: (): Promise<RecurringTransaction[]> => ipcRenderer.invoke('recurringTransactions:list'),
     add: (input: NewRecurringTransaction): Promise<ActionResult> =>
       ipcRenderer.invoke('recurringTransactions:add', input),
+    update: (id: number, input: UpdateRecurringTransaction): Promise<ActionResult> =>
+      ipcRenderer.invoke('recurringTransactions:update', id, input),
     toggle: (id: number): Promise<ActionResult> => ipcRenderer.invoke('recurringTransactions:toggle', id),
     remove: (id: number): Promise<ActionResult> => ipcRenderer.invoke('recurringTransactions:delete', id)
   },

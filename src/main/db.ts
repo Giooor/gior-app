@@ -168,6 +168,7 @@ export async function initDb(): Promise<void> {
   ensureColumn(db, 'transactions', 'recurring_id', 'recurring_id INTEGER')
   ensureColumn(db, 'transactions', 'currency', "currency TEXT NOT NULL DEFAULT 'COP'")
   ensureColumn(db, 'recurring_transactions', 'currency', "currency TEXT NOT NULL DEFAULT 'COP'")
+  ensureColumn(db, 'recurring_transactions', 'payment_url', 'payment_url TEXT')
   ensureColumn(db, 'tasks', 'priority', "priority TEXT NOT NULL DEFAULT 'media'")
   ensureColumn(db, 'tasks', 'recurring_id', 'recurring_id INTEGER')
   ensureColumn(db, 'tasks', 'focused_seconds', 'focused_seconds INTEGER NOT NULL DEFAULT 0')

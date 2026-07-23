@@ -45,7 +45,8 @@ export function exportLedgerCsvTo(period: ReportPeriod, destPath: string): void 
     )
   }
 
-  writeFileSync(destPath, `﻿${lines.join('\n')}`, 'utf8')
+  const bom = String.fromCharCode(0xfeff)
+  writeFileSync(destPath, `${bom}${lines.join('\n')}`, 'utf8')
 }
 
 function escapeHtml(value: string): string {

@@ -32,6 +32,8 @@
   --border-default: #d7d9dd;
   --border-light: #e5e7eb;
   --border-subtle: #f3f4f6;
+
+  color-scheme: light;
 }
 
 :root[data-theme='dark'] {
@@ -60,12 +62,33 @@
   --border-default: #383a44;
   --border-light: #2c2e37;
   --border-subtle: #262832;
+
+  color-scheme: dark;
 }
 
 * {
   box-sizing: border-box;
   scrollbar-width: thin;
   scrollbar-color: rgba(99, 102, 241, 0.4) transparent;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-faint);
+  opacity: 1;
+}
+
+select {
+  color: var(--text-primary);
+}
+
+select option {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+select option:disabled {
+  color: var(--text-faint);
 }
 
 html,
@@ -2779,9 +2802,40 @@ body.widget-shell::after {
   box-shadow: var(--shadow-neu-in-sm);
 }
 
-.recurring-form input[type='text'] {
+.recurring-form input[type='text'],
+.recurring-payment-url-input {
   flex: 1;
   min-width: 140px;
+}
+
+.recurring-item-editing {
+  flex-direction: column;
+  align-items: stretch;
+  background: var(--bg-surface);
+}
+
+.recurring-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.recurring-edit-row select,
+.recurring-edit-row input {
+  padding: 8px 10px;
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  border-radius: 8px;
+  font-size: 13px;
+  background: var(--bg-surface-translucent);
+  box-shadow: var(--shadow-neu-in-sm);
+}
+
+.recurring-edit-actions {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
 }
 
 .frequency-picker {
@@ -3085,35 +3139,67 @@ body.widget-shell::after {
 }
 
 .category-color-dot:hover {
-  transform: scale(1.15);
+  transform: scale(1.12);
 }
 
 .category-color-dot.active {
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9), 0 0 0 4px #1a1a1a;
+  box-shadow: 0 0 0 3px var(--bg-surface), 0 0 0 5px var(--text-primary);
 }
 
-.category-color-dot-indigo {
-  background: #6366f1;
+.category-color-dot-red {
+  background: #f87171;
 }
 
-.category-color-dot-rose {
-  background: #fb7185;
+.category-color-dot-orange {
+  background: #fb923c;
 }
 
 .category-color-dot-amber {
   background: #fbbf24;
 }
 
+.category-color-dot-yellow {
+  background: #facc15;
+}
+
+.category-color-dot-lime {
+  background: #a3e635;
+}
+
 .category-color-dot-emerald {
   background: #34d399;
+}
+
+.category-color-dot-teal {
+  background: #2dd4bf;
+}
+
+.category-color-dot-cyan {
+  background: #22d3ee;
 }
 
 .category-color-dot-sky {
   background: #38bdf8;
 }
 
+.category-color-dot-blue {
+  background: #60a5fa;
+}
+
+.category-color-dot-indigo {
+  background: #6366f1;
+}
+
 .category-color-dot-violet {
   background: #a78bfa;
+}
+
+.category-color-dot-fuchsia {
+  background: #e879f9;
+}
+
+.category-color-dot-rose {
+  background: #fb7185;
 }
 
 .category-color-dot-slate {

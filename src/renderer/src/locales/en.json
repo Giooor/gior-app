@@ -450,8 +450,11 @@
       "categoryPlaceholder": "Category...",
       "descriptionPlaceholder": "Description (optional)",
       "amountPlaceholder": "Amount",
+      "paymentUrlPlaceholder": "Payment link (optional)",
       "emptyState": "You don't have any recurring transactions set up.",
       "deleteAria": "Delete recurring transaction",
+      "editAria": "Edit recurring transaction",
+      "payAria": "Pay online",
       "hint": "These are generated automatically once a month, the first time you open the app."
     },
     "categoryManager": {
@@ -486,12 +489,20 @@
         "moreHorizontal": "Other"
       },
       "color": {
-        "indigo": "Indigo",
-        "rose": "Rose",
+        "red": "Red",
+        "orange": "Orange",
         "amber": "Amber",
+        "yellow": "Yellow",
+        "lime": "Lime",
         "emerald": "Emerald",
+        "teal": "Teal",
+        "cyan": "Cyan",
         "sky": "Sky",
+        "blue": "Blue",
+        "indigo": "Indigo",
         "violet": "Violet",
+        "fuchsia": "Fuchsia",
+        "rose": "Rose",
         "slate": "Slate"
       }
     },

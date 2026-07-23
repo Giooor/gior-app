@@ -72,7 +72,23 @@ export const CATEGORY_ICONS = [
 
 export type CategoryIcon = (typeof CATEGORY_ICONS)[number]
 
-export const CATEGORY_COLORS = ['indigo', 'rose', 'amber', 'emerald', 'sky', 'violet', 'slate'] as const
+export const CATEGORY_COLORS = [
+  'red',
+  'orange',
+  'amber',
+  'yellow',
+  'lime',
+  'emerald',
+  'teal',
+  'cyan',
+  'sky',
+  'blue',
+  'indigo',
+  'violet',
+  'fuchsia',
+  'rose',
+  'slate'
+] as const
 
 export type CategoryColor = (typeof CATEGORY_COLORS)[number]
 
@@ -98,12 +114,20 @@ export const CATEGORY_ICON_LABEL_KEY: Record<CategoryIcon, string> = {
 }
 
 export const CATEGORY_COLOR_LABEL_KEY: Record<CategoryColor, string> = {
-  indigo: 'ledger.categoryManager.color.indigo',
-  rose: 'ledger.categoryManager.color.rose',
+  red: 'ledger.categoryManager.color.red',
+  orange: 'ledger.categoryManager.color.orange',
   amber: 'ledger.categoryManager.color.amber',
+  yellow: 'ledger.categoryManager.color.yellow',
+  lime: 'ledger.categoryManager.color.lime',
   emerald: 'ledger.categoryManager.color.emerald',
+  teal: 'ledger.categoryManager.color.teal',
+  cyan: 'ledger.categoryManager.color.cyan',
   sky: 'ledger.categoryManager.color.sky',
+  blue: 'ledger.categoryManager.color.blue',
+  indigo: 'ledger.categoryManager.color.indigo',
   violet: 'ledger.categoryManager.color.violet',
+  fuchsia: 'ledger.categoryManager.color.fuchsia',
+  rose: 'ledger.categoryManager.color.rose',
   slate: 'ledger.categoryManager.color.slate'
 }
 
@@ -115,6 +139,7 @@ export interface RecurringTransaction {
   amount: number
   currency: TransactionCurrency
   active: boolean
+  paymentUrl: string | null
 }
 
 export interface NewRecurringTransaction {
@@ -123,7 +148,10 @@ export interface NewRecurringTransaction {
   description: string
   amount: number
   currency: TransactionCurrency
+  paymentUrl?: string | null
 }
+
+export type UpdateRecurringTransaction = NewRecurringTransaction
 
 export interface MonthlyGoal {
   month: string

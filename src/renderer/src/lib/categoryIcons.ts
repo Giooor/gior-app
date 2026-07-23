@@ -42,11 +42,19 @@ export const CATEGORY_ICON_COMPONENT: Record<CategoryIcon, typeof Wallet> = {
 }
 
 export const CATEGORY_COLOR_HEX: Record<string, string> = {
-  indigo: '#6366f1',
-  rose: '#fb7185',
+  red: '#f87171',
+  orange: '#fb923c',
   amber: '#fbbf24',
+  yellow: '#facc15',
+  lime: '#a3e635',
   emerald: '#34d399',
+  teal: '#2dd4bf',
+  cyan: '#22d3ee',
   sky: '#38bdf8',
+  blue: '#60a5fa',
+  indigo: '#6366f1',
   violet: '#a78bfa',
+  fuchsia: '#e879f9',
+  rose: '#fb7185',
   slate: '#94a3b8'
 }
