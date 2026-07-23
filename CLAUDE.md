@@ -38,7 +38,7 @@ Before running it:
 - Bump `version` in `package.json` (semver: minor for new features, patch for fixes only) — `electron-updater` only offers an update if the published version is higher than what's installed.
 - A `GH_TOKEN` (or `GITHUB_TOKEN`) env var with `repo`/`public_repo` scope must be set in the shell that runs the command, for electron-builder to publish. **Never ask the user to paste this token into chat** — it would persist in conversation history. Have the user set it in their own terminal and run the release themselves, or set it in a shell you invoke without ever printing its value.
 
-`electron-builder.yml`'s publish block sets `draft: false` — without it, electron-builder's GitHub publisher defaults to creating the release as a **draft**, which is invisible to both the public GitHub API and `electron-updater`'s update check, so installed apps silently find nothing to update to until someone manually clicks "Publish release" on GitHub.
+`electron-builder.yml`'s publish block sets `releaseType: release` — without it, electron-builder's GitHub publisher defaults to creating the release as a **draft**, which is invisible to both the public GitHub API and `electron-updater`'s update check, so installed apps silently find nothing to update to until someone manually clicks "Publish release" on GitHub. Note: `draft: false` is **not** a valid key in electron-builder 25.x's GitHub publish schema (it fails config validation before any build step runs) — `releaseType` (`'draft' | 'prerelease' | 'release'`) is the correct option.
 
 ## Conventions
 
