@@ -17,6 +17,7 @@ import {
   X
 } from 'lucide-react'
 import { currency, formatByCurrency } from '../../lib/currency'
+import { useConfirm } from '../../lib/useConfirm'
 import RecurringTransactions from './RecurringTransactions'
 import ContabilidadSettingsPanel from './ContabilidadSettingsPanel'
 import CategoryBudgets from './CategoryBudgets'
@@ -47,6 +48,7 @@ function currentMonth(): string {
 
 export default function Contabilidad(): JSX.Element {
   const { t } = useTranslation()
+  const { confirm, dialog } = useConfirm()
   const locale = currentLocale()
 
   function formatHeaderMonth(month: string): string {
@@ -190,6 +192,7 @@ export default function Contabilidad(): JSX.Element {
   }
 
   async function handleDelete(id: number): Promise<void> {
+    if (!(await confirm(t('ledger.deleteConfirm')))) return
     await window.api.ledger.remove(id)
     await loadTransactions()
   }
@@ -973,6 +976,7 @@ export default function Contabilidad(): JSX.Element {
         exchangeRate={exchangeRate}
         onExchangeRateChange={setExchangeRate}
       />
+      {dialog}
     </div>
   )
 }

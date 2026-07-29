@@ -1,3 +1,5 @@
+import type { ProjectColor } from './projects'
+
 export type TaskPriority = 'alta' | 'media' | 'baja'
 
 export interface Task {
@@ -11,6 +13,9 @@ export interface Task {
   targetMinutes: number | null
   subtaskTotal: number
   subtaskCompleted: number
+  projectId: number | null
+  projectName: string | null
+  projectColor: ProjectColor | null
 }
 
 export interface NewTask {
@@ -18,12 +23,14 @@ export interface NewTask {
   title: string
   priority: TaskPriority
   targetMinutes: number | null
+  projectId: number | null
 }
 
 export interface UpdateTask {
   title: string
   priority: TaskPriority
   targetMinutes: number | null
+  projectId: number | null
 }
 
 export interface Subtask {

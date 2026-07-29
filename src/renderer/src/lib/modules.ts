@@ -1,6 +1,14 @@
-import { CalendarHeart, ChefHat, Home, ListChecks, Settings, StickyNote, Wallet } from 'lucide-react'
+import { CalendarHeart, ChefHat, Flame, Home, ListChecks, Settings, StickyNote, Wallet } from 'lucide-react'
 
-export type ModuleKey = 'inicio' | 'contabilidad' | 'tareas' | 'recordatorios' | 'recetas' | 'notas' | 'ajustes'
+export type ModuleKey =
+  | 'inicio'
+  | 'contabilidad'
+  | 'tareas'
+  | 'habitos'
+  | 'recordatorios'
+  | 'recetas'
+  | 'notas'
+  | 'ajustes'
 
 export interface ModuleInfo {
   key: ModuleKey
@@ -24,6 +32,13 @@ export const modules: ModuleInfo[] = [
     nameKey: 'nav.tareas.name',
     descriptionKey: 'nav.tareas.description',
     icon: ListChecks,
+    enabled: true
+  },
+  {
+    key: 'habitos',
+    nameKey: 'nav.habitos.name',
+    descriptionKey: 'nav.habitos.description',
+    icon: Flame,
     enabled: true
   },
   {

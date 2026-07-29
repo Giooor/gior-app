@@ -1,6 +1,6 @@
 import { CSSProperties, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Maximize2, Pause, Play, X } from 'lucide-react'
+import { Maximize2, Pause, Play, SkipForward, X } from 'lucide-react'
 import { playSessionEndChime } from '../../lib/sound'
 import { BREAK_SECONDS, pomodoroMotivationKey } from '../../../../shared/pomodoro'
 import type { PomodoroState } from '../../../../shared/pomodoro'
@@ -48,7 +48,7 @@ export default function PomodoroWidget(): JSX.Element | null {
             onClick={() => window.api.pomodoro.focusMain()}
             aria-label={t('pomodoro.openAppAria')}
           >
-            <Maximize2 size={13} strokeWidth={2} />
+            <Maximize2 size={10} strokeWidth={2} />
           </button>
           <button
             type="button"
@@ -56,7 +56,7 @@ export default function PomodoroWidget(): JSX.Element | null {
             onClick={() => window.close()}
             aria-label={t('pomodoro.closeAria')}
           >
-            <X size={14} strokeWidth={2} />
+            <X size={11} strokeWidth={2} />
           </button>
         </div>
       </div>
@@ -76,7 +76,7 @@ export default function PomodoroWidget(): JSX.Element | null {
         onClick={() => (state.isRunning ? window.api.pomodoro.pause() : window.api.pomodoro.start())}
         aria-label={state.isRunning ? t('pomodoro.pauseAria') : t('pomodoro.startAria')}
       >
-        {state.isRunning ? <Pause size={13} strokeWidth={2} /> : <Play size={13} strokeWidth={2} />}
+        {state.isRunning ? <Pause size={10} strokeWidth={2} /> : <Play size={10} strokeWidth={2} />}
       </button>
 
       {state.linkedTaskTitle && <div className="widget-task">{state.linkedTaskTitle}</div>}
@@ -84,6 +84,18 @@ export default function PomodoroWidget(): JSX.Element | null {
       <div className={`widget-motivation widget-motivation-${state.mode}${celebrate ? ' celebrate' : ''}`}>
         {celebrate ? t('pomodoro.sessionComplete') : t(pomodoroMotivationKey(state.mode, progressPct, state.isRunning))}
       </div>
+
+      {state.mode === 'break' && (
+        <button
+          type="button"
+          className="widget-skip-button"
+          onClick={() => window.api.pomodoro.skipBreak()}
+          aria-label={t('pomodoro.skipBreakAria')}
+        >
+          <SkipForward size={9} strokeWidth={2} />
+          {t('pomodoro.skipBreak')}
+        </button>
+      )}
     </div>
   )
 }

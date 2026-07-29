@@ -1,7 +1,9 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
+  ArrowRightCircle,
   CalendarCheck,
+  CalendarClock,
   Check,
   ChevronDown,
   ChevronLeft,
@@ -15,12 +17,16 @@ import {
   X
 } from 'lucide-react'
 import { playTaskCompleteSound } from '../../lib/sound'
+import { useConfirm } from '../../lib/useConfirm'
 import { formatWeekdayMonthDay } from '../../lib/dateFormat'
 import { toLocalIso, todayIso } from '../../../../shared/date'
 import type { NewTask, Task, TaskPriority } from '../../../../shared/tasks'
+import type { Project } from '../../../../shared/projects'
+import { PROJECT_COLOR_HEX } from '../../../../shared/projects'
 import Pomodoro from './Pomodoro'
 import RecurringTasks from './RecurringTasks'
 import Subtasks from './Subtasks'
+import Projects from './Projects'
 
 const PRIORITIES: TaskPriority[] = ['alta', 'media', 'baja']
 
@@ -52,6 +58,7 @@ function parseTargetMinutes(value: string): number | null {
 
 export default function Tareas(): JSX.Element {
   const { t } = useTranslation()
+  const { confirm, dialog } = useConfirm()
   const PRIORITY_LABEL: Record<TaskPriority, string> = {
     alta: t('tasks.priority.alta'),
     media: t('tasks.priority.media'),
@@ -75,16 +82,37 @@ export default function Tareas(): JSX.Element {
   const [priority, setPriority] = useState<TaskPriority>('media')
   const [targetMinutes, setTargetMinutes] = useState('')
   const [showTargetInput, setShowTargetInput] = useState(false)
+  const [projectId, setProjectId] = useState<number | null>(null)
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set())
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editTitle, setEditTitle] = useState('')
   const [editPriority, setEditPriority] = useState<TaskPriority>('media')
   const [editTargetMinutes, setEditTargetMinutes] = useState('')
   const [showEditTargetInput, setShowEditTargetInput] = useState(false)
+  const [editProjectId, setEditProjectId] = useState<number | null>(null)
+  const [projects, setProjects] = useState<Project[]>([])
+  const [projectFilter, setProjectFilter] = useState<number | null>(null)
+  const [overdueTasks, setOverdueTasks] = useState<Task[]>([])
 
   useEffect(() => {
     loadTasks()
   }, [date])
+
+  useEffect(() => {
+    loadProjects()
+  }, [])
+
+  async function loadProjects(): Promise<void> {
+    const rows = await window.api.projects.list()
+    setProjects(rows)
+  }
+
+  async function handleProjectsChange(): Promise<void> {
+    const rows = await window.api.projects.list()
+    setProjects(rows)
+    if (projectFilter !== null && !rows.some((p) => p.id === projectFilter)) setProjectFilter(null)
+    await loadTasks(false)
+  }
 
   const pomodoroPrevRef = useRef<{ linkedTaskId: number | null; isRunning: boolean } | null>(null)
 
@@ -107,7 +135,23 @@ export default function Tareas(): JSX.Element {
     const rows = await window.api.tasks.list(date)
     setTasks(rows)
     setTasksVersion((v) => v + 1)
+    if (date === todayIso()) {
+      setOverdueTasks(await window.api.tasks.listOverdue(date))
+    } else {
+      setOverdueTasks([])
+    }
     if (showLoading) setLoading(false)
+  }
+
+  async function handleMoveOverdueToToday(id: number): Promise<void> {
+    await window.api.tasks.reschedule(id, todayIso())
+    await loadTasks(false)
+  }
+
+  async function handleCompleteOverdue(id: number): Promise<void> {
+    playTaskCompleteSound()
+    await window.api.tasks.toggle(id)
+    await loadTasks(false)
   }
 
   function toggleExpanded(id: number): void {
@@ -124,12 +168,19 @@ export default function Tareas(): JSX.Element {
     const trimmed = title.trim()
     if (!trimmed) return
 
-    const input: NewTask = { date, title: trimmed, priority, targetMinutes: parseTargetMinutes(targetMinutes) }
+    const input: NewTask = {
+      date,
+      title: trimmed,
+      priority,
+      targetMinutes: parseTargetMinutes(targetMinutes),
+      projectId
+    }
     await window.api.tasks.add(input)
     setTitle('')
     setPriority('media')
     setTargetMinutes('')
     setShowTargetInput(false)
+    setProjectId(null)
     await loadTasks()
   }
 
@@ -140,6 +191,7 @@ export default function Tareas(): JSX.Element {
   }
 
   async function handleDelete(id: number): Promise<void> {
+    if (!(await confirm(t('tasks.deleteConfirm')))) return
     await window.api.tasks.remove(id)
     await loadTasks()
   }
@@ -150,6 +202,7 @@ export default function Tareas(): JSX.Element {
     setEditPriority(task.priority)
     setEditTargetMinutes(task.targetMinutes !== null ? String(task.targetMinutes) : '')
     setShowEditTargetInput(task.targetMinutes !== null)
+    setEditProjectId(task.projectId)
   }
 
   function cancelEdit(): void {
@@ -164,7 +217,8 @@ export default function Tareas(): JSX.Element {
     await window.api.tasks.update(id, {
       title: trimmed,
       priority: editPriority,
-      targetMinutes: parseTargetMinutes(editTargetMinutes)
+      targetMinutes: parseTargetMinutes(editTargetMinutes),
+      projectId: editProjectId
     })
     setEditingId(null)
     await loadTasks(false)
@@ -173,6 +227,11 @@ export default function Tareas(): JSX.Element {
   const sortedTasks = useMemo(
     () => [...tasks].sort((a, b) => PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority] || a.id - b.id),
     [tasks]
+  )
+
+  const visibleTasks = useMemo(
+    () => (projectFilter === null ? sortedTasks : sortedTasks.filter((task) => task.projectId === projectFilter)),
+    [sortedTasks, projectFilter]
   )
 
   const completedCount = tasks.filter((task) => task.completed).length
@@ -214,6 +273,46 @@ export default function Tareas(): JSX.Element {
             )}
           </div>
 
+          {date === todayIso() && overdueTasks.length > 0 && (
+            <div className="overdue-panel">
+              <div className="overdue-header">
+                <CalendarClock size={15} strokeWidth={1.75} />
+                <span>{t('tasks.overdue.title', { count: overdueTasks.length })}</span>
+              </div>
+              <ul className="overdue-list">
+                {overdueTasks.map((task) => (
+                  <li key={task.id} className="overdue-item">
+                    <span className={`priority-dot priority-${task.priority}`} />
+                    <div className="overdue-item-body">
+                      <span className="overdue-item-title">{task.title}</span>
+                      <span className="overdue-item-date">{formatLabel(task.date)}</span>
+                    </div>
+                    <div className="overdue-item-actions">
+                      <button
+                        type="button"
+                        className="icon-button"
+                        onClick={() => handleMoveOverdueToToday(task.id)}
+                        aria-label={t('tasks.overdue.moveToTodayAria')}
+                        title={t('tasks.overdue.moveToTodayAria')}
+                      >
+                        <ArrowRightCircle size={16} strokeWidth={1.75} />
+                      </button>
+                      <button
+                        type="button"
+                        className="icon-button icon-button-save"
+                        onClick={() => handleCompleteOverdue(task.id)}
+                        aria-label={t('tasks.overdue.completeAria')}
+                        title={t('tasks.overdue.completeAria')}
+                      >
+                        <Check size={16} strokeWidth={2} />
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {tasks.length > 0 && (
             <div className="tasks-progress-bar">
               <div className="tasks-progress-track">
@@ -223,6 +322,33 @@ export default function Tareas(): JSX.Element {
                 <CalendarCheck size={13} strokeWidth={2} />
                 {t('tasks.progressLabel', { completed: completedCount, total: tasks.length })}
               </span>
+            </div>
+          )}
+
+          {projects.length > 0 && (
+            <div className="project-filter" role="radiogroup" aria-label={t('tasks.projectFilterAria')}>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={projectFilter === null}
+                className={`project-filter-chip${projectFilter === null ? ' active' : ''}`}
+                onClick={() => setProjectFilter(null)}
+              >
+                {t('tasks.projectFilterAll')}
+              </button>
+              {projects.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={projectFilter === p.id}
+                  className={`project-filter-chip${projectFilter === p.id ? ' active' : ''}`}
+                  onClick={() => setProjectFilter(p.id)}
+                >
+                  <span className="project-filter-dot" style={{ background: PROJECT_COLOR_HEX[p.color] }} />
+                  {p.name}
+                </button>
+              ))}
             </div>
           )}
 
@@ -248,6 +374,21 @@ export default function Tareas(): JSX.Element {
                 </button>
               ))}
             </div>
+            {projects.length > 0 && (
+              <select
+                className="task-project-select"
+                value={projectId ?? ''}
+                onChange={(e) => setProjectId(e.target.value ? Number(e.target.value) : null)}
+                aria-label={t('tasks.projectAria')}
+              >
+                <option value="">{t('tasks.noProject')}</option>
+                {projects.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            )}
             {showTargetInput ? (
               <label className="focus-duration-field">
                 <Target size={13} strokeWidth={1.75} />
@@ -290,14 +431,14 @@ export default function Tareas(): JSX.Element {
 
           {loading ? (
             <p className="tasks-loading">{t('common.loading')}</p>
-          ) : sortedTasks.length === 0 ? (
+          ) : visibleTasks.length === 0 ? (
             <div className="empty-state">
               <ListTodo size={28} strokeWidth={1.5} />
               <p>{t('tasks.emptyState')}</p>
             </div>
           ) : (
             <ul className="tasks-list">
-              {sortedTasks.map((task) => {
+              {visibleTasks.map((task) => {
                 const focusedLabel = formatFocusedTime(task.focusedSeconds)
                 const expanded = expandedIds.has(task.id)
                 const editing = editingId === task.id
@@ -329,6 +470,21 @@ export default function Tareas(): JSX.Element {
                             </button>
                           ))}
                         </div>
+                        {projects.length > 0 && (
+                          <select
+                            className="task-project-select"
+                            value={editProjectId ?? ''}
+                            onChange={(e) => setEditProjectId(e.target.value ? Number(e.target.value) : null)}
+                            aria-label={t('tasks.projectAria')}
+                          >
+                            <option value="">{t('tasks.noProject')}</option>
+                            {projects.map((p) => (
+                              <option key={p.id} value={p.id}>
+                                {p.name}
+                              </option>
+                            ))}
+                          </select>
+                        )}
                         {showEditTargetInput ? (
                           <label className="focus-duration-field">
                             <Target size={13} strokeWidth={1.75} />
@@ -387,6 +543,18 @@ export default function Tareas(): JSX.Element {
                         <input type="checkbox" checked={task.completed} onChange={() => handleToggle(task)} />
                         <span className="task-checkmark" />
                         <span className="task-title">{task.title}</span>
+                        {task.projectName && (
+                          <span
+                            className="task-project-badge"
+                            style={{ color: PROJECT_COLOR_HEX[task.projectColor ?? 'sky'] }}
+                          >
+                            <span
+                              className="task-project-dot"
+                              style={{ background: PROJECT_COLOR_HEX[task.projectColor ?? 'sky'] }}
+                            />
+                            {task.projectName}
+                          </span>
+                        )}
                         {focusedLabel && (
                           <span className="focused-badge">
                             <Timer size={11} strokeWidth={2} />
@@ -444,11 +612,13 @@ export default function Tareas(): JSX.Element {
             </ul>
           )}
 
+          <Projects projects={projects} onChange={handleProjectsChange} />
           <RecurringTasks />
         </div>
 
         <Pomodoro tasksVersion={tasksVersion} />
       </div>
+      {dialog}
     </div>
   )
 }

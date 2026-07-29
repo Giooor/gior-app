@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Check, Pencil, Plus, Trash2, X } from 'lucide-react'
 import { playTaskCompleteSound } from '../../lib/sound'
+import { useConfirm } from '../../lib/useConfirm'
 import type { Subtask } from '../../../../shared/tasks'
 
 export default function Subtasks({
@@ -12,6 +13,7 @@ export default function Subtasks({
   onChange: () => void
 }): JSX.Element {
   const { t } = useTranslation()
+  const { confirm, dialog } = useConfirm()
   const [items, setItems] = useState<Subtask[]>([])
   const [title, setTitle] = useState('')
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -45,6 +47,7 @@ export default function Subtasks({
   }
 
   async function handleDelete(id: number): Promise<void> {
+    if (!(await confirm(t('tasks.subtasks.deleteConfirm')))) return
     await window.api.subtasks.remove(id)
     await load()
     onChange()
@@ -136,6 +139,7 @@ export default function Subtasks({
           onChange={(e) => setTitle(e.target.value)}
         />
       </form>
+      {dialog}
     </div>
   )
 }

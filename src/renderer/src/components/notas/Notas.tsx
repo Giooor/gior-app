@@ -4,6 +4,7 @@ import { Archive, ArchiveRestore, Pin, PinOff, Search, StickyNote, Trash2, X } f
 import { NOTE_COLOR_LABEL_KEY, NOTE_COLORS, noteHasContent } from '../../../../shared/notes'
 import type { Note, NoteColor } from '../../../../shared/notes'
 import { currentLocale } from '../../lib/dateFormat'
+import { useConfirm } from '../../lib/useConfirm'
 
 type Filter = 'todas' | 'fijadas' | 'archivadas'
 
@@ -51,6 +52,7 @@ function ColorPicker({
 
 export default function Notas(): JSX.Element {
   const { t } = useTranslation()
+  const { confirm, dialog } = useConfirm()
   const locale = currentLocale()
 
   function formatRelative(iso: string): string {
@@ -194,6 +196,7 @@ export default function Notas(): JSX.Element {
 
   async function removeNote(n: Note, e?: MouseEvent): Promise<void> {
     e?.stopPropagation()
+    if (!(await confirm(t('notes.deleteConfirm')))) return
     await window.api.notes.remove(n.id)
     if (openNoteId === n.id) setOpenNoteId(null)
     await load()
@@ -433,6 +436,7 @@ export default function Notas(): JSX.Element {
           </div>
         </div>
       )}
+      {dialog}
     </div>
   )
 }

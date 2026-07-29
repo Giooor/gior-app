@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Check, ExternalLink, Pencil, Trash2, X } from 'lucide-react'
 import { formatByCurrency } from '../../lib/currency'
+import { useConfirm } from '../../lib/useConfirm'
 import { TRANSACTION_CURRENCIES } from '../../../../shared/ledger'
 import type {
   Category,
@@ -18,6 +19,7 @@ interface Props {
 
 export default function RecurringTransactions({ categories }: Props): JSX.Element {
   const { t } = useTranslation()
+  const { confirm, dialog } = useConfirm()
   const [rules, setRules] = useState<RecurringTransaction[]>([])
   const [open, setOpen] = useState(false)
   const [type, setType] = useState<TransactionType>('gasto')
@@ -89,6 +91,7 @@ export default function RecurringTransactions({ categories }: Props): JSX.Elemen
   }
 
   async function handleDelete(id: number): Promise<void> {
+    if (!(await confirm(t('ledger.recurring.deleteConfirm')))) return
     await window.api.recurringTransactions.remove(id)
     await load()
   }
@@ -342,6 +345,7 @@ export default function RecurringTransactions({ categories }: Props): JSX.Elemen
           <p className="recurring-hint">{t('ledger.recurring.hint')}</p>
         </div>
       )}
+      {dialog}
     </div>
   )
 }

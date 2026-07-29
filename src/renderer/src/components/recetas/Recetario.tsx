@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { ChefHat, ChevronDown, ChevronRight, Clock, Pencil, Plus, Star, Trash2, Users, X } from 'lucide-react'
 import { RECIPE_CATEGORIES, RECIPE_CATEGORY_LABEL_KEY } from '../../../../shared/recipes'
 import type { NewRecipe, NewRecipeIngredient, Recipe, RecipeCategory } from '../../../../shared/recipes'
+import { useConfirm } from '../../lib/useConfirm'
 
 interface FormState {
   title: string
@@ -45,6 +46,7 @@ interface Props {
 
 export default function Recetario({ focusRecipeId, onFocusHandled }: Props): JSX.Element {
   const { t } = useTranslation()
+  const { confirm, dialog } = useConfirm()
   const [recipes, setRecipes] = useState<Recipe[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -164,6 +166,7 @@ export default function Recetario({ focusRecipeId, onFocusHandled }: Props): JSX
   }
 
   async function handleDelete(id: number): Promise<void> {
+    if (!(await confirm(t('recipes.deleteConfirm')))) return
     await window.api.recipes.remove(id)
     if (expandedId === id) setExpandedId(null)
     await load()
@@ -427,6 +430,7 @@ export default function Recetario({ focusRecipeId, onFocusHandled }: Props): JSX
           })}
         </ul>
       )}
+      {dialog}
     </div>
   )
 }

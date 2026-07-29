@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Check, Pencil, Plus, Trash2, X } from 'lucide-react'
 import CategoryBadge from './CategoryBadge'
 import { currency } from '../../lib/currency'
+import { useConfirm } from '../../lib/useConfirm'
 import { CATEGORY_ICON_COMPONENT } from '../../lib/categoryIcons'
 import {
   CATEGORY_COLORS,
@@ -33,6 +34,7 @@ function parseBudget(value: string): number | null {
 
 export default function CategoryManager({ categories, onChange }: Props): JSX.Element {
   const { t } = useTranslation()
+  const { confirm, dialog } = useConfirm()
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT)
   const [error, setError] = useState('')
 
@@ -115,6 +117,7 @@ export default function CategoryManager({ categories, onChange }: Props): JSX.El
   }
 
   async function handleDelete(id: number): Promise<void> {
+    if (!(await confirm(t('ledger.categoryManager.deleteConfirm')))) return
     await window.api.categories.remove(id)
     await onChange()
   }
@@ -226,6 +229,7 @@ export default function CategoryManager({ categories, onChange }: Props): JSX.El
       </form>
 
       {error && <p className="error">{error}</p>}
+      {dialog}
     </div>
   )
 }

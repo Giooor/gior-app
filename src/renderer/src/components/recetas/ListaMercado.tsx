@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Plus, RefreshCw, Trash2 } from 'lucide-react
 import { addDays, mondayOf } from '../../../../shared/recipes'
 import { weekdayName } from '../../../../shared/reminders'
 import { currentLocale, capitalize } from '../../lib/dateFormat'
+import { useConfirm } from '../../lib/useConfirm'
 import { todayIso } from '../../../../shared/date'
 import type { ShoppingListItem } from '../../../../shared/recipes'
 
@@ -14,6 +15,7 @@ interface Props {
 
 export default function ListaMercado({ weekStart, onWeekChange }: Props): JSX.Element {
   const { t } = useTranslation()
+  const { confirm, dialog } = useConfirm()
   const locale = currentLocale()
 
   function formatDayHeader(iso: string): string {
@@ -54,6 +56,7 @@ export default function ListaMercado({ weekStart, onWeekChange }: Props): JSX.El
   }
 
   async function handleClear(): Promise<void> {
+    if (!(await confirm(t('recipes.clearListConfirm')))) return
     await window.api.shoppingList.clear(weekStart)
     await load()
   }
@@ -207,6 +210,7 @@ export default function ListaMercado({ weekStart, onWeekChange }: Props): JSX.El
           )}
         </>
       )}
+      {dialog}
     </div>
   )
 }

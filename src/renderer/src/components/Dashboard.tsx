@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { LockKeyhole, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import Contabilidad from './contabilidad/Contabilidad'
 import Tareas from './tareas/Tareas'
+import Habitos from './habitos/Habitos'
 import Recordatorios from './recordatorios/Recordatorios'
 import Recetas from './recetas/Recetas'
 import Notas from './notas/Notas'
@@ -11,6 +12,7 @@ import Ajustes from './ajustes/Ajustes'
 import { modules, type ModuleKey } from '../lib/modules'
 import { todayIso } from '../../../shared/date'
 import { daysUntilReminder, isReminderPast } from '../../../shared/reminders'
+import { isScheduledOn } from '../../../shared/habits'
 
 interface Props {
   onLock: () => void
@@ -21,13 +23,19 @@ const SIDEBAR_COLLAPSED_KEY = 'sidebarCollapsed'
 type Counts = Partial<Record<ModuleKey, number>>
 
 async function loadCounts(): Promise<Counts> {
-  const [tasks, reminders, notes] = await Promise.all([
-    window.api.tasks.list(todayIso()),
+  const today = todayIso()
+  const [tasks, reminders, notes, habits, habitLogsToday] = await Promise.all([
+    window.api.tasks.list(today),
     window.api.reminders.list(),
-    window.api.notes.list()
+    window.api.notes.list(),
+    window.api.habits.list(),
+    window.api.habits.logsSince(today)
   ])
+  const doneTodayIds = new Set(habitLogsToday.filter((l) => l.completed).map((l) => l.habitId))
+  const now = new Date()
   return {
     tareas: tasks.filter((t) => !t.completed).length,
+    habitos: habits.filter((h) => h.active && isScheduledOn(h, now) && !doneTodayIds.has(h.id)).length,
     recordatorios: reminders.filter((r) => !isReminderPast(r) && daysUntilReminder(r) <= 7).length,
     notas: notes.filter((n) => !n.archived).length
   }
@@ -98,6 +106,7 @@ export default function Dashboard({ onLock }: Props): JSX.Element {
         {active === 'inicio' && <Home onNavigate={setActive} />}
         {active === 'contabilidad' && <Contabilidad />}
         {active === 'tareas' && <Tareas />}
+        {active === 'habitos' && <Habitos />}
         {active === 'recordatorios' && <Recordatorios />}
         {active === 'recetas' && <Recetas />}
         {active === 'notas' && <Notas />}

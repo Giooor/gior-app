@@ -182,6 +182,35 @@ export async function initDb(): Promise<void> {
     );
   `)
 
+  db.run(`
+    CREATE TABLE IF NOT EXISTS habits (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      color TEXT NOT NULL,
+      frequency TEXT NOT NULL CHECK (frequency IN ('diaria', 'semanal', 'personalizada')),
+      weekday INTEGER,
+      weekdays_mask INTEGER,
+      active INTEGER NOT NULL DEFAULT 1
+    );
+  `)
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS habit_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      habit_id INTEGER NOT NULL,
+      date TEXT NOT NULL,
+      completed INTEGER NOT NULL DEFAULT 1
+    );
+  `)
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS projects (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL UNIQUE COLLATE NOCASE,
+      color TEXT NOT NULL
+    );
+  `)
+
   ensureColumn(db, 'reminders', 'repeats', 'repeats INTEGER NOT NULL DEFAULT 1')
 
   ensureColumn(db, 'transactions', 'recurring_id', 'recurring_id INTEGER')
@@ -192,6 +221,7 @@ export async function initDb(): Promise<void> {
   ensureColumn(db, 'tasks', 'recurring_id', 'recurring_id INTEGER')
   ensureColumn(db, 'tasks', 'focused_seconds', 'focused_seconds INTEGER NOT NULL DEFAULT 0')
   ensureColumn(db, 'tasks', 'target_minutes', 'target_minutes INTEGER')
+  ensureColumn(db, 'tasks', 'project_id', 'project_id INTEGER')
 
   migrateRecurringTasksFrequencyCheck(db)
   ensureColumn(db, 'recurring_tasks', 'weekdays_mask', 'weekdays_mask INTEGER')

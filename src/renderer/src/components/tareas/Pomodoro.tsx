@@ -1,6 +1,6 @@
 import { CSSProperties, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { PictureInPicture2, Pause, Play, RotateCcw } from 'lucide-react'
+import { PictureInPicture2, Pause, Play, RotateCcw, SkipForward } from 'lucide-react'
 import { playSessionEndChime } from '../../lib/sound'
 import { BREAK_SECONDS, pomodoroMotivationKey } from '../../../../shared/pomodoro'
 import { todayIso } from '../../../../shared/date'
@@ -83,6 +83,18 @@ export default function Pomodoro({ tasksVersion = 0 }: { tasksVersion?: number }
       <div className={`widget-motivation widget-motivation-${state.mode}${celebrate ? ' celebrate' : ''}`}>
         {celebrate ? t('pomodoro.sessionComplete') : t(pomodoroMotivationKey(state.mode, progressPct, state.isRunning))}
       </div>
+
+      {state.mode === 'break' && (
+        <button
+          type="button"
+          className="pomodoro-skip-button"
+          onClick={() => window.api.pomodoro.skipBreak()}
+          aria-label={t('pomodoro.skipBreakAria')}
+        >
+          <SkipForward size={13} strokeWidth={2} />
+          {t('pomodoro.skipBreak')}
+        </button>
+      )}
 
       <select
         className="pomodoro-task-select"

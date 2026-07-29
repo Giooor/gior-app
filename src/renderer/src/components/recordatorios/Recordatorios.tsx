@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ExternalLink, Pencil, PartyPopper, Plus, Repeat, Trash2 } from 'lucide-react'
+import { ExternalLink, Pencil, PartyPopper, Plus, Repeat, Trash2, X } from 'lucide-react'
 import {
   daysInMonth,
   daysUntilReminder,
@@ -14,6 +14,9 @@ import {
 import type { NewReminder, Reminder, ReminderType } from '../../../../shared/reminders'
 import { REMINDER_TYPES as TYPES, TYPE_ICON, TYPE_LABEL_KEY } from '../../lib/reminderTypes'
 import { currentLocale, capitalize } from '../../lib/dateFormat'
+import { todayIso } from '../../../../shared/date'
+import { useConfirm } from '../../lib/useConfirm'
+import RemindersCalendar from './RemindersCalendar'
 
 interface FormState {
   title: string
@@ -38,6 +41,7 @@ function emptyForm(): FormState {
 
 export default function Recordatorios(): JSX.Element {
   const { t } = useTranslation()
+  const { confirm, dialog } = useConfirm()
   const locale = currentLocale()
   const [reminders, setReminders] = useState<Reminder[]>([])
   const [loading, setLoading] = useState(true)
@@ -46,10 +50,20 @@ export default function Recordatorios(): JSX.Element {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editForm, setEditForm] = useState<FormState>(emptyForm())
   const [error, setError] = useState('')
+  const [calendarMonth, setCalendarMonth] = useState(todayIso().slice(0, 7))
 
   useEffect(() => {
     load()
   }, [])
+
+  useEffect(() => {
+    if (!showForm) return
+    function onKeyDown(e: KeyboardEvent): void {
+      if (e.key === 'Escape') setShowForm(false)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [showForm])
 
   async function load(): Promise<void> {
     setLoading(true)
@@ -110,6 +124,7 @@ export default function Recordatorios(): JSX.Element {
   }
 
   async function handleDelete(id: number): Promise<void> {
+    if (!(await confirm(t('reminders.deleteConfirm')))) return
     await window.api.reminders.remove(id)
     await load()
   }
@@ -117,10 +132,19 @@ export default function Recordatorios(): JSX.Element {
   function startEdit(r: Reminder): void {
     setEditingId(r.id)
     setEditForm({ title: r.title, day: r.day, month: r.month, type: r.type, notes: r.notes, repeats: r.repeats })
+    requestAnimationFrame(() => {
+      document.getElementById(`reminder-item-${r.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    })
   }
 
   function cancelEdit(): void {
     setEditingId(null)
+  }
+
+  function handleAddForDate(date: Date): void {
+    setEditingId(null)
+    setForm({ title: '', day: date.getDate(), month: date.getMonth() + 1, type: 'cumpleanos', notes: '', repeats: true })
+    setShowForm(true)
   }
 
   async function handleEditSubmit(e: FormEvent, id: number): Promise<void> {
@@ -195,88 +219,113 @@ export default function Recordatorios(): JSX.Element {
         </div>
       )}
 
+      <RemindersCalendar
+        reminders={reminders}
+        month={calendarMonth}
+        onMonthChange={setCalendarMonth}
+        onSelectReminder={startEdit}
+        onAddForDate={handleAddForDate}
+      />
+
       {showForm && (
-        <form className="reminder-form" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder={t('reminders.titlePlaceholder')}
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-            autoFocus
-          />
-
-          <div className="reminder-date-fields">
-            <select
-              value={form.day}
-              onChange={(e) => setForm({ ...form, day: Number(e.target.value) })}
-              aria-label={t('reminders.dayAria')}
-            >
-              {dayOptionsFor(form.month).map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
-            <select
-              value={form.month}
-              onChange={(e) => setForm({ ...form, month: Number(e.target.value) })}
-              aria-label={t('reminders.monthAria')}
-            >
-              {monthOptions.map((m) => (
-                <option key={m} value={m}>
-                  {capitalize(monthName(m, locale))}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="reminder-type-picker" role="radiogroup" aria-label={t('reminders.typeAria')}>
-            {TYPES.map((typ) => {
-              const Icon = TYPE_ICON[typ]
-              return (
-                <button
-                  key={typ}
-                  type="button"
-                  role="radio"
-                  aria-checked={form.type === typ}
-                  className={`reminder-type-chip${form.type === typ ? ' active' : ''}`}
-                  onClick={() => setForm({ ...form, type: typ })}
-                >
-                  <Icon size={14} strokeWidth={1.75} />
-                  {t(TYPE_LABEL_KEY[typ])}
-                </button>
-              )
-            })}
-          </div>
-
-          <input
-            type="text"
-            placeholder={t('reminders.notesPlaceholder')}
-            value={form.notes}
-            onChange={(e) => setForm({ ...form, notes: e.target.value })}
-          />
-
-          <label className="reminder-repeat-toggle">
+        <div className="reminder-modal-backdrop" onClick={() => setShowForm(false)}>
+          <form
+            className="reminder-form reminder-modal-card"
+            onSubmit={handleSubmit}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="reminder-modal-header">
+              <h3>{t('reminders.addAria')}</h3>
+              <button
+                type="button"
+                className="icon-button"
+                onClick={() => setShowForm(false)}
+                aria-label={t('common.close')}
+              >
+                <X size={16} strokeWidth={1.75} />
+              </button>
+            </div>
             <input
-              type="checkbox"
-              checked={form.repeats}
-              onChange={(e) => setForm({ ...form, repeats: e.target.checked })}
+              type="text"
+              placeholder={t('reminders.titlePlaceholder')}
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              autoFocus
             />
-            <Repeat size={13} strokeWidth={1.75} />
-            {t('reminders.repeatsToggle')}
-          </label>
 
-          <div className="reminder-form-actions">
-            <button type="submit" className="ledger-submit">
-              {t('common.save')}
-            </button>
-            <button type="button" className="pill-button" onClick={() => setShowForm(false)}>
-              {t('common.cancel')}
-            </button>
-          </div>
+            <div className="reminder-date-fields">
+              <select
+                value={form.day}
+                onChange={(e) => setForm({ ...form, day: Number(e.target.value) })}
+                aria-label={t('reminders.dayAria')}
+              >
+                {dayOptionsFor(form.month).map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={form.month}
+                onChange={(e) => setForm({ ...form, month: Number(e.target.value) })}
+                aria-label={t('reminders.monthAria')}
+              >
+                {monthOptions.map((m) => (
+                  <option key={m} value={m}>
+                    {capitalize(monthName(m, locale))}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          {error && <p className="error">{error}</p>}
-        </form>
+            <div className="reminder-type-picker" role="radiogroup" aria-label={t('reminders.typeAria')}>
+              {TYPES.map((typ) => {
+                const Icon = TYPE_ICON[typ]
+                return (
+                  <button
+                    key={typ}
+                    type="button"
+                    role="radio"
+                    aria-checked={form.type === typ}
+                    className={`reminder-type-chip${form.type === typ ? ' active' : ''}`}
+                    onClick={() => setForm({ ...form, type: typ })}
+                  >
+                    <Icon size={14} strokeWidth={1.75} />
+                    {t(TYPE_LABEL_KEY[typ])}
+                  </button>
+                )
+              })}
+            </div>
+
+            <input
+              type="text"
+              placeholder={t('reminders.notesPlaceholder')}
+              value={form.notes}
+              onChange={(e) => setForm({ ...form, notes: e.target.value })}
+            />
+
+            <label className="reminder-repeat-toggle">
+              <input
+                type="checkbox"
+                checked={form.repeats}
+                onChange={(e) => setForm({ ...form, repeats: e.target.checked })}
+              />
+              <Repeat size={13} strokeWidth={1.75} />
+              {t('reminders.repeatsToggle')}
+            </label>
+
+            <div className="reminder-form-actions">
+              <button type="submit" className="ledger-submit">
+                {t('common.save')}
+              </button>
+              <button type="button" className="pill-button" onClick={() => setShowForm(false)}>
+                {t('common.cancel')}
+              </button>
+            </div>
+
+            {error && <p className="error">{error}</p>}
+          </form>
+        </div>
       )}
 
       {loading ? (
@@ -297,7 +346,7 @@ export default function Recordatorios(): JSX.Element {
 
             if (editing) {
               return (
-                <li key={r.id} className="reminder-item reminder-item-editing">
+                <li key={r.id} id={`reminder-item-${r.id}`} className="reminder-item reminder-item-editing">
                   <form className="reminder-edit-form" onSubmit={(e) => handleEditSubmit(e, r.id)}>
                     <input
                       type="text"
@@ -376,7 +425,11 @@ export default function Recordatorios(): JSX.Element {
             }
 
             return (
-              <li key={r.id} className={`reminder-item${past ? ' reminder-item-past' : ''}`}>
+              <li
+                key={r.id}
+                id={`reminder-item-${r.id}`}
+                className={`reminder-item${past ? ' reminder-item-past' : ''}`}
+              >
                 <div className={`reminder-date-badge reminder-date-badge-${r.type}`}>
                   <span className="reminder-date-weekday">{weekdayAbbr(occurrence.getDay(), locale)}</span>
                   <span className="reminder-date-day">{r.day}</span>
@@ -436,6 +489,7 @@ export default function Recordatorios(): JSX.Element {
           })}
         </ul>
       )}
+      {dialog}
     </div>
   )
 }

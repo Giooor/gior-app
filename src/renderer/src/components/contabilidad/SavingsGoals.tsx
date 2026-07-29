@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PiggyBank, Plus, Trash2 } from 'lucide-react'
 import { formatByCurrency } from '../../lib/currency'
+import { useConfirm } from '../../lib/useConfirm'
 import { todayIso } from '../../../../shared/date'
 import { TRANSACTION_CURRENCIES } from '../../../../shared/ledger'
 import type { TransactionCurrency } from '../../../../shared/ledger'
@@ -9,6 +10,7 @@ import type { SavingsGoal } from '../../../../shared/savings'
 
 export default function SavingsGoals(): JSX.Element {
   const { t } = useTranslation()
+  const { confirm, dialog } = useConfirm()
   const [goals, setGoals] = useState<SavingsGoal[]>([])
   const [showForm, setShowForm] = useState(false)
   const [title, setTitle] = useState('')
@@ -61,6 +63,7 @@ export default function SavingsGoals(): JSX.Element {
   }
 
   async function handleDelete(id: number): Promise<void> {
+    if (!(await confirm(t('ledger.savings.deleteConfirm')))) return
     await window.api.savingsGoals.remove(id)
     await load()
   }
@@ -191,6 +194,7 @@ export default function SavingsGoals(): JSX.Element {
           })}
         </ul>
       )}
+      {dialog}
     </div>
   )
 }

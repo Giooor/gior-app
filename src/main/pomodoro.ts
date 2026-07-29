@@ -115,17 +115,33 @@ export function resetPomodoro(): PomodoroState {
   return getState()
 }
 
+export function skipBreak(): PomodoroState {
+  if (mode !== 'break') return getState()
+
+  isRunning = false
+  if (interval) {
+    clearInterval(interval)
+    interval = null
+  }
+  mode = 'work'
+  secondsLeft = currentWorkSeconds()
+  broadcast()
+  return getState()
+}
+
 export function setPomodoroTask(
   taskId: number | null,
   taskTitle: string | null,
   targetMinutes: number | null
 ): PomodoroState {
   flushFocusedSeconds()
+  const sessionUntouched = mode === 'work' && !isRunning && secondsLeft === currentWorkSeconds()
+
   linkedTaskId = taskId
   linkedTaskTitle = taskId !== null ? taskTitle : null
   linkedTaskWorkSeconds = taskId !== null && targetMinutes ? targetMinutes * 60 : null
 
-  if (mode === 'work' && !isRunning) {
+  if (sessionUntouched) {
     secondsLeft = currentWorkSeconds()
   }
 

@@ -33,6 +33,7 @@
     "inicio": { "name": "Home", "description": "General overview of the app" },
     "contabilidad": { "name": "Finances", "description": "Track your income, expenses and balance" },
     "tareas": { "name": "Tasks", "description": "Organize your day and focus with Pomodoro" },
+    "habitos": { "name": "Habits", "description": "Build streaks and track your daily consistency" },
     "recordatorios": { "name": "Reminders", "description": "Birthdays, anniversaries and important dates" },
     "recetas": { "name": "Recipes", "description": "Recipe book, weekly plan and shopping list" },
     "notas": { "name": "Notes", "description": "Ideas, notes and everything you don't want to forget" },
@@ -79,12 +80,16 @@
     "goalSaveFailed": "Could not save the goal.",
     "categorySelectRequired": "Select a category.",
     "categoryAlreadyExists": "A category with that name already exists.",
+    "projectAlreadyExists": "A project with that name already exists.",
     "invalidBudget": "Budget must be a number greater than or equal to zero.",
     "invalidCurrency": "Invalid currency.",
     "invalidExchangeRate": "Exchange rate must be a number greater than zero.",
     "securityQuestionRequired": "Choose a question and write an answer.",
     "securityAnswerIncorrect": "The answer is not correct.",
-    "updaterDevMode": "Updates only work in the installed version of the app."
+    "updaterDevMode": "Updates only work in the installed version of the app.",
+    "invalidMuscleGroup": "Invalid muscle group.",
+    "routineExercisesRequired": "Add at least one exercise to the routine.",
+    "exerciseInUse": "Can't delete: this exercise was already used in a workout."
   },
   "auth": {
     "setupTitle": "Welcome",
@@ -169,13 +174,18 @@
     "emptyState": "You don't have any reminders yet. Add the first one.",
     "editAria": "Edit reminder",
     "deleteAria": "Delete reminder",
+    "deleteConfirm": "Delete this reminder?",
     "past": "Past",
     "pastNoRepeat": "Past · doesn't repeat",
     "noRepeatSuffix": "{{type}} · doesn't repeat",
     "payNow": "Pay now",
     "nextYear": "{{month}} next year",
     "inDays": "In {{n}} days",
-    "titleRequired": "Enter a title."
+    "titleRequired": "Enter a title.",
+    "prevMonthAria": "Previous month",
+    "nextMonthAria": "Next month",
+    "thisMonth": "This month",
+    "addForDayAria": "Add reminder on this day"
   },
   "tasks": {
     "pageTitle": "Tasks",
@@ -201,7 +211,28 @@
     "editAria": "Edit task",
     "subtasksAria": "Subtasks",
     "deleteAria": "Delete task",
+    "deleteConfirm": "Delete this task?",
     "escapeToCancelAria": "Cancel",
+    "projectAria": "Project",
+    "noProject": "No project",
+    "projectFilterAria": "Filter by project",
+    "projectFilterAll": "All",
+    "overdue": {
+      "title_one": "{{count}} unfinished task from earlier days",
+      "title_other": "{{count}} unfinished tasks from earlier days",
+      "moveToTodayAria": "Move to today",
+      "completeAria": "Mark as completed"
+    },
+    "projects": {
+      "toggleLabel": "Projects",
+      "namePlaceholder": "Project name",
+      "colorAria": "Project color",
+      "addAria": "Add project",
+      "editAria": "Edit project",
+      "deleteAria": "Delete project",
+      "deleteConfirm": "Delete this project? Assigned tasks will be left without a project.",
+      "emptyState": "You don't have any projects yet. Create the first one."
+    },
     "recurring": {
       "toggleLabel": "Recurring tasks",
       "titlePlaceholder": "Task title",
@@ -216,14 +247,39 @@
       "weekdayPreset": "Monday to Friday",
       "emptyState": "You don't have any recurring tasks set up.",
       "deleteAria": "Delete recurring task",
+      "deleteConfirm": "Delete this recurring task?",
       "hint": "These are generated automatically each day you open the app, when they apply.",
       "everyDay": "Every day"
     },
     "subtasks": {
       "addPlaceholder": "Add subtask...",
       "editAria": "Edit subtask",
-      "deleteAria": "Delete subtask"
+      "deleteAria": "Delete subtask",
+      "deleteConfirm": "Delete this subtask?"
     }
+  },
+  "habits": {
+    "pageTitle": "Habits",
+    "subtitle": "Build streaks and track your daily consistency",
+    "addAria": "Add habit",
+    "editAria": "Edit habit",
+    "deleteAria": "Delete habit",
+    "deleteConfirm": "Delete this habit? Its streak history will be lost.",
+    "titlePlaceholder": "What habit do you want to build?",
+    "colorAria": "Color",
+    "frequencyAria": "Frequency",
+    "frequency": {
+      "diaria": "Daily",
+      "semanal": "Weekly",
+      "personalizada": "Custom"
+    },
+    "weekdayAria": "Day of the week",
+    "weekdaysAria": "Days of the week",
+    "everyDay": "Every day",
+    "markDoneAria": "Mark done today",
+    "alreadyDoneToday": "Done today",
+    "streakLabel": "{{count}} day streak",
+    "emptyState": "You don't have any habits yet. Add the first one."
   },
   "pomodoro": {
     "title": "Pomodoro",
@@ -245,6 +301,8 @@
     "noLinkedTask": "No linked task",
     "linkedTaskAria": "Linked task",
     "resetAria": "Reset",
+    "skipBreak": "Skip break",
+    "skipBreakAria": "Skip break",
     "showFloatingAria": "Show floating widget",
     "showFloatingTitle": "Show as a floating window",
     "completedToday_one": "{{count}} pomodoro completed today",
@@ -363,6 +421,7 @@
     "restoreAria": "Restore note",
     "archiveAria": "Archive note",
     "deleteAria": "Delete note",
+    "deleteConfirm": "Delete this note? This cannot be undone.",
     "emptySearch": "No notes match your search.",
     "emptyArchived": "You don't have any archived notes.",
     "emptyPinned": "You haven't pinned any notes yet.",
@@ -426,6 +485,7 @@
     "noMatchingTransactions": "No transactions match the filter.",
     "autoGeneratedTitle": "Generated automatically",
     "deleteAria": "Delete",
+    "deleteConfirm": "Delete this transaction? This cannot be undone.",
     "settings": {
       "title": "Accounting settings",
       "triggerAria": "Accounting settings"
@@ -457,6 +517,7 @@
       "paymentUrlPlaceholder": "Payment link (optional)",
       "emptyState": "You don't have any recurring transactions set up.",
       "deleteAria": "Delete recurring transaction",
+      "deleteConfirm": "Delete this recurring payment?",
       "editAria": "Edit recurring transaction",
       "payAria": "Pay online",
       "hint": "These are generated automatically once a month, the first time you open the app."
@@ -471,6 +532,7 @@
       "addAria": "Add category",
       "editAria": "Edit category",
       "deleteAria": "Delete category",
+      "deleteConfirm": "Delete this category?",
       "emptyState": "You don't have any categories yet.",
       "icon": {
         "wallet": "Wallet",
@@ -531,6 +593,7 @@
       "contributePlaceholder": "Contribution",
       "contributeButton": "Add",
       "deleteAria": "Delete goal",
+      "deleteConfirm": "Delete this savings goal? Its recorded contributions will be lost.",
       "reached": "Goal reached!",
       "emptyState": "You don't have any savings goals set up yet."
     }
@@ -572,6 +635,7 @@
     "favoriteAria": "Favorite",
     "editAria": "Edit recipe",
     "deleteAria": "Delete recipe",
+    "deleteConfirm": "Delete this recipe?",
     "minutesShort": "{{n}} min",
     "prevWeekAria": "Previous week",
     "nextWeekAria": "Next week",
@@ -583,6 +647,7 @@
     "addMealAria": "Add {{meal}}",
     "generateFromPlan": "Generate from plan",
     "clearList": "Clear list",
+    "clearListConfirm": "Clear this week's whole shopping list?",
     "addItemPlaceholder": "Add item...",
     "addItemAria": "Add item",
     "deleteItemAria": "Delete item",

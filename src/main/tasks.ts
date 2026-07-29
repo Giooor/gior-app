@@ -10,6 +10,7 @@ import type {
   TaskPriority,
   UpdateTask
 } from '../shared/tasks'
+import type { ProjectColor } from '../shared/projects'
 
 const VALID_PRIORITIES: TaskPriority[] = ['alta', 'media', 'baja']
 
@@ -19,34 +20,61 @@ function normalizeTargetMinutes(value: number | null): number | null {
   return Math.round(value)
 }
 
-export function listTasks(date: string): Task[] {
-  const db = getDb()
-  const stmt = db.prepare(
-    `SELECT t.id, t.date, t.title, t.completed, t.priority, t.recurring_id, t.focused_seconds, t.target_minutes,
+const TASK_SELECT = `SELECT t.id, t.date, t.title, t.completed, t.priority, t.recurring_id, t.focused_seconds, t.target_minutes,
+       t.project_id, p.name AS project_name, p.color AS project_color,
        (SELECT COUNT(*) FROM subtasks s WHERE s.task_id = t.id) AS subtask_total,
        (SELECT COUNT(*) FROM subtasks s WHERE s.task_id = t.id AND s.completed = 1) AS subtask_completed
-     FROM tasks t WHERE t.date = :date ORDER BY t.id ASC`
-  )
+     FROM tasks t LEFT JOIN projects p ON p.id = t.project_id`
+
+function mapTaskRow(row: Record<string, unknown>): Task {
+  return {
+    id: row.id as number,
+    date: row.date as string,
+    title: row.title as string,
+    completed: Boolean(row.completed),
+    priority: row.priority as TaskPriority,
+    recurringId: (row.recurring_id as number | null) ?? null,
+    focusedSeconds: row.focused_seconds as number,
+    targetMinutes: (row.target_minutes as number | null) ?? null,
+    subtaskTotal: row.subtask_total as number,
+    subtaskCompleted: row.subtask_completed as number,
+    projectId: (row.project_id as number | null) ?? null,
+    projectName: (row.project_name as string | null) ?? null,
+    projectColor: (row.project_color as ProjectColor | null) ?? null
+  }
+}
+
+export function listTasks(date: string): Task[] {
+  const db = getDb()
+  const stmt = db.prepare(`${TASK_SELECT} WHERE t.date = :date ORDER BY t.id ASC`)
   stmt.bind({ ':date': date })
 
   const rows: Task[] = []
   while (stmt.step()) {
-    const row = stmt.getAsObject()
-    rows.push({
-      id: row.id as number,
-      date: row.date as string,
-      title: row.title as string,
-      completed: Boolean(row.completed),
-      priority: row.priority as TaskPriority,
-      recurringId: (row.recurring_id as number | null) ?? null,
-      focusedSeconds: row.focused_seconds as number,
-      targetMinutes: (row.target_minutes as number | null) ?? null,
-      subtaskTotal: row.subtask_total as number,
-      subtaskCompleted: row.subtask_completed as number
-    })
+    rows.push(mapTaskRow(stmt.getAsObject()))
   }
   stmt.free()
   return rows
+}
+
+export function listOverdueTasks(beforeDate: string): Task[] {
+  const db = getDb()
+  const stmt = db.prepare(
+    `${TASK_SELECT} WHERE t.date < :beforeDate AND t.completed = 0 AND t.recurring_id IS NULL ORDER BY t.date ASC, t.id ASC`
+  )
+  stmt.bind({ ':beforeDate': beforeDate })
+
+  const rows: Task[] = []
+  while (stmt.step()) {
+    rows.push(mapTaskRow(stmt.getAsObject()))
+  }
+  stmt.free()
+  return rows
+}
+
+export function rescheduleTask(id: number, date: string): void {
+  getDb().run('UPDATE tasks SET date = :date WHERE id = :id', { ':date': date, ':id': id })
+  persistDb()
 }
 
 function insertTask(
@@ -54,16 +82,18 @@ function insertTask(
   title: string,
   priority: TaskPriority,
   recurringId: number | null,
-  targetMinutes: number | null
+  targetMinutes: number | null,
+  projectId: number | null
 ): void {
   getDb().run(
-    'INSERT INTO tasks (date, title, completed, priority, recurring_id, target_minutes) VALUES (:date, :title, 0, :priority, :recurringId, :targetMinutes)',
+    'INSERT INTO tasks (date, title, completed, priority, recurring_id, target_minutes, project_id) VALUES (:date, :title, 0, :priority, :recurringId, :targetMinutes, :projectId)',
     {
       ':date': date,
       ':title': title,
       ':priority': priority,
       ':recurringId': recurringId,
-      ':targetMinutes': targetMinutes
+      ':targetMinutes': targetMinutes,
+      ':projectId': projectId
     }
   )
 }
@@ -78,7 +108,7 @@ export function addTask(input: NewTask): void {
   }
   const priority = VALID_PRIORITIES.includes(input.priority) ? input.priority : 'media'
 
-  insertTask(input.date, title, priority, null, normalizeTargetMinutes(input.targetMinutes))
+  insertTask(input.date, title, priority, null, normalizeTargetMinutes(input.targetMinutes), input.projectId ?? null)
   persistDb()
 }
 
@@ -89,12 +119,16 @@ export function updateTask(id: number, input: UpdateTask): void {
   }
   const priority = VALID_PRIORITIES.includes(input.priority) ? input.priority : 'media'
 
-  getDb().run('UPDATE tasks SET title = :title, priority = :priority, target_minutes = :targetMinutes WHERE id = :id', {
-    ':title': title,
-    ':priority': priority,
-    ':targetMinutes': normalizeTargetMinutes(input.targetMinutes),
-    ':id': id
-  })
+  getDb().run(
+    'UPDATE tasks SET title = :title, priority = :priority, target_minutes = :targetMinutes, project_id = :projectId WHERE id = :id',
+    {
+      ':title': title,
+      ':priority': priority,
+      ':targetMinutes': normalizeTargetMinutes(input.targetMinutes),
+      ':projectId': input.projectId ?? null,
+      ':id': id
+    }
+  )
   persistDb()
 }
 
@@ -214,7 +248,7 @@ export function generateDueRecurringTasks(): void {
     checkStmt.free()
 
     if (!alreadyGenerated) {
-      insertTask(today, rule.title, 'media', rule.id, null)
+      insertTask(today, rule.title, 'media', rule.id, null, null)
       generated = true
     }
   }

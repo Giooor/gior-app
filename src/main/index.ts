@@ -48,9 +48,11 @@ import {
   deleteSubtask,
   deleteTask,
   generateDueRecurringTasks,
+  listOverdueTasks,
   listRecurringTasks,
   listSubtasks,
   listTasks,
+  rescheduleTask,
   toggleRecurringTask,
   toggleSubtask,
   toggleTask,
@@ -63,12 +65,15 @@ import {
   pomodoroEvents,
   resetPomodoro,
   setPomodoroTask,
+  skipBreak,
   startPomodoro
 } from './pomodoro'
 import { addSavingsContribution, addSavingsGoal, deleteSavingsGoal, listSavingsGoals } from './savings'
 import type { NewSavingsContribution, NewSavingsGoal } from '../shared/savings'
 import { addReminder, deleteReminder, listReminders, updateReminder } from './reminders'
 import { addNote, deleteNote, listNotes, toggleArchiveNote, togglePinNote, updateNote } from './notes'
+import { addHabit, deleteHabit, listHabits, listHabitLogsSince, toggleHabitLog, updateHabit } from './habits'
+import { addProject, deleteProject, listProjects, updateProject } from './projects'
 import { checkAndSendDailyNotifications } from './notifications'
 import {
   addRecipe,
@@ -99,6 +104,8 @@ import type { NewRecurringTask, NewSubtask, NewTask, UpdateTask } from '../share
 import type { PomodoroMode } from '../shared/pomodoro'
 import type { NewReminder, UpdateReminder } from '../shared/reminders'
 import type { NewNote, UpdateNote } from '../shared/notes'
+import type { NewHabit, UpdateHabit } from '../shared/habits'
+import type { NewProject, UpdateProject } from '../shared/projects'
 import type { NewMealPlanEntry, NewRecipe, NewShoppingListItem, UpdateRecipe } from '../shared/recipes'
 
 let mainWindow: BrowserWindow | null = null
@@ -190,8 +197,8 @@ function createPomodoroWidget(): void {
   }
 
   const { workArea } = screen.getPrimaryDisplay()
-  const width = 190
-  const height = 200
+  const width = 148
+  const height = 168
   const margin = 16
 
   widgetWindow = new BrowserWindow({
@@ -503,6 +510,63 @@ app.whenReady().then(async () => {
     return { ok: true }
   })
 
+  ipcMain.handle('habits:list', () => listHabits())
+
+  ipcMain.handle('habits:add', (_event, input: NewHabit) => {
+    try {
+      const id = addHabit(input)
+      return { ok: true, id }
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'errors.generic' }
+    }
+  })
+
+  ipcMain.handle('habits:update', (_event, id: number, input: UpdateHabit) => {
+    try {
+      updateHabit(id, input)
+      return { ok: true }
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'errors.generic' }
+    }
+  })
+
+  ipcMain.handle('habits:delete', (_event, id: number) => {
+    deleteHabit(id)
+    return { ok: true }
+  })
+
+  ipcMain.handle('habits:toggleLog', (_event, habitId: number, date: string) => {
+    const completed = toggleHabitLog(habitId, date)
+    return { ok: true, completed }
+  })
+
+  ipcMain.handle('habits:logsSince', (_event, since: string) => listHabitLogsSince(since))
+
+  ipcMain.handle('projects:list', () => listProjects())
+
+  ipcMain.handle('projects:add', (_event, input: NewProject) => {
+    try {
+      const id = addProject(input)
+      return { ok: true, id }
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'errors.generic' }
+    }
+  })
+
+  ipcMain.handle('projects:update', (_event, id: number, input: UpdateProject) => {
+    try {
+      updateProject(id, input)
+      return { ok: true }
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'errors.generic' }
+    }
+  })
+
+  ipcMain.handle('projects:delete', (_event, id: number) => {
+    deleteProject(id)
+    return { ok: true }
+  })
+
   ipcMain.handle('recipes:list', () => listRecipes())
 
   ipcMain.handle('recipes:add', (_event, input: NewRecipe) => {
@@ -709,6 +773,13 @@ app.whenReady().then(async () => {
 
   ipcMain.handle('tasks:list', (_event, date: string) => listTasks(date))
 
+  ipcMain.handle('tasks:listOverdue', (_event, beforeDate: string) => listOverdueTasks(beforeDate))
+
+  ipcMain.handle('tasks:reschedule', (_event, id: number, date: string) => {
+    rescheduleTask(id, date)
+    return { ok: true }
+  })
+
   ipcMain.handle('tasks:add', (_event, input: NewTask) => {
     try {
       addTask(input)
@@ -799,6 +870,8 @@ app.whenReady().then(async () => {
   ipcMain.handle('pomodoro:pause', () => pausePomodoro())
 
   ipcMain.handle('pomodoro:reset', () => resetPomodoro())
+
+  ipcMain.handle('pomodoro:skipBreak', () => skipBreak())
 
   ipcMain.handle(
     'pomodoro:setTask',

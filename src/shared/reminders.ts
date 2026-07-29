@@ -75,6 +75,20 @@ export function reminderOccurrenceDate(reminder: ReminderOccurrenceInput, from: 
   return nextOccurrenceDate(reminder.month, reminder.day, from)
 }
 
+export function reminderOccursOn(
+  reminder: ReminderOccurrenceInput,
+  date: Date,
+  from: Date = new Date()
+): boolean {
+  if (!reminder.repeats && date.getFullYear() !== from.getFullYear()) return false
+  const occ = occurrenceDateInYear(reminder.month, reminder.day, date.getFullYear())
+  return (
+    occ.getFullYear() === date.getFullYear() &&
+    occ.getMonth() === date.getMonth() &&
+    occ.getDate() === date.getDate()
+  )
+}
+
 export function isReminderPast(reminder: ReminderOccurrenceInput, from: Date = new Date()): boolean {
   if (reminder.repeats) return false
   const today = new Date(from.getFullYear(), from.getMonth(), from.getDate())

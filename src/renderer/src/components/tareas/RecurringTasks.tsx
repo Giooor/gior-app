@@ -4,11 +4,13 @@ import { Trash2 } from 'lucide-react'
 import type { NewRecurringTask, RecurringTask, RecurringTaskFrequency } from '../../../../shared/tasks'
 import { weekdayAbbr, weekdayName } from '../../../../shared/reminders'
 import { currentLocale, capitalize } from '../../lib/dateFormat'
+import { useConfirm } from '../../lib/useConfirm'
 
 const FREQUENCIES: RecurringTaskFrequency[] = ['diaria', 'semanal', 'personalizada']
 
 export default function RecurringTasks(): JSX.Element {
   const { t } = useTranslation()
+  const { confirm, dialog } = useConfirm()
   const locale = currentLocale()
   const weekdayFull = Array.from({ length: 7 }, (_, i) => capitalize(weekdayName(i, locale)))
   const weekdayLetters = Array.from({ length: 7 }, (_, i) => weekdayAbbr(i, locale).charAt(0))
@@ -87,6 +89,7 @@ export default function RecurringTasks(): JSX.Element {
   }
 
   async function handleDelete(id: number): Promise<void> {
+    if (!(await confirm(t('tasks.recurring.deleteConfirm')))) return
     await window.api.recurringTasks.remove(id)
     await load()
   }
@@ -197,6 +200,7 @@ export default function RecurringTasks(): JSX.Element {
           <p className="recurring-hint">{t('tasks.recurring.hint')}</p>
         </div>
       )}
+      {dialog}
     </div>
   )
 }

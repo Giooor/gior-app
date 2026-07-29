@@ -33,6 +33,7 @@
     "inicio": { "name": "Accueil", "description": "Aperçu général de l'application" },
     "contabilidad": { "name": "Finances", "description": "Suivez vos revenus, dépenses et votre solde" },
     "tareas": { "name": "Tâches", "description": "Organisez votre journée et concentrez-vous avec le Pomodoro" },
+    "habitos": { "name": "Habitudes", "description": "Construisez des séries et suivez votre régularité quotidienne" },
     "recordatorios": { "name": "Rappels", "description": "Anniversaires et dates importantes" },
     "recetas": { "name": "Recettes", "description": "Livre de recettes, plan hebdomadaire et liste de courses" },
     "notas": { "name": "Notes", "description": "Idées, notes et tout ce que vous ne voulez pas oublier" },
@@ -79,12 +80,16 @@
     "goalSaveFailed": "Impossible d'enregistrer l'objectif.",
     "categorySelectRequired": "Sélectionnez une catégorie.",
     "categoryAlreadyExists": "Une catégorie avec ce nom existe déjà.",
+    "projectAlreadyExists": "Un projet avec ce nom existe déjà.",
     "invalidBudget": "Le budget doit être un nombre supérieur ou égal à zéro.",
     "invalidCurrency": "Devise invalide.",
     "invalidExchangeRate": "Le taux de change doit être un nombre supérieur à zéro.",
     "securityQuestionRequired": "Choisissez une question et écrivez une réponse.",
     "securityAnswerIncorrect": "La réponse n'est pas correcte.",
-    "updaterDevMode": "Les mises à jour ne fonctionnent que dans la version installée de l'application."
+    "updaterDevMode": "Les mises à jour ne fonctionnent que dans la version installée de l'application.",
+    "invalidMuscleGroup": "Groupe musculaire invalide.",
+    "routineExercisesRequired": "Ajoutez au moins un exercice à la routine.",
+    "exerciseInUse": "Impossible de supprimer : cet exercice a déjà été utilisé dans un entraînement."
   },
   "auth": {
     "setupTitle": "Bienvenue",
@@ -169,13 +174,18 @@
     "emptyState": "Vous n'avez pas encore de rappels. Ajoutez le premier.",
     "editAria": "Modifier le rappel",
     "deleteAria": "Supprimer le rappel",
+    "deleteConfirm": "Supprimer ce rappel ?",
     "past": "Passé",
     "pastNoRepeat": "Passé · ne se répète pas",
     "noRepeatSuffix": "{{type}} · ne se répète pas",
     "payNow": "Payer maintenant",
     "nextYear": "{{month}} l'année prochaine",
     "inDays": "Dans {{n}} jours",
-    "titleRequired": "Entrez un titre."
+    "titleRequired": "Entrez un titre.",
+    "prevMonthAria": "Mois précédent",
+    "nextMonthAria": "Mois suivant",
+    "thisMonth": "Ce mois-ci",
+    "addForDayAria": "Ajouter un rappel ce jour-là"
   },
   "tasks": {
     "pageTitle": "Tâches",
@@ -201,7 +211,28 @@
     "editAria": "Modifier la tâche",
     "subtasksAria": "Sous-tâches",
     "deleteAria": "Supprimer la tâche",
+    "deleteConfirm": "Supprimer cette tâche ?",
     "escapeToCancelAria": "Annuler",
+    "projectAria": "Projet",
+    "noProject": "Aucun projet",
+    "projectFilterAria": "Filtrer par projet",
+    "projectFilterAll": "Tous",
+    "overdue": {
+      "title_one": "{{count}} tâche non terminée des jours précédents",
+      "title_other": "{{count}} tâches non terminées des jours précédents",
+      "moveToTodayAria": "Déplacer à aujourd'hui",
+      "completeAria": "Marquer comme terminée"
+    },
+    "projects": {
+      "toggleLabel": "Projets",
+      "namePlaceholder": "Nom du projet",
+      "colorAria": "Couleur du projet",
+      "addAria": "Ajouter un projet",
+      "editAria": "Modifier le projet",
+      "deleteAria": "Supprimer le projet",
+      "deleteConfirm": "Supprimer ce projet ? Les tâches associées n'auront plus de projet.",
+      "emptyState": "Vous n'avez pas encore de projets. Créez le premier."
+    },
     "recurring": {
       "toggleLabel": "Tâches récurrentes",
       "titlePlaceholder": "Titre de la tâche",
@@ -216,14 +247,39 @@
       "weekdayPreset": "Du lundi au vendredi",
       "emptyState": "Vous n'avez pas de tâches récurrentes configurées.",
       "deleteAria": "Supprimer la récurrente",
+      "deleteConfirm": "Supprimer cette tâche récurrente ?",
       "hint": "Elles sont générées automatiquement chaque jour où vous ouvrez l'application, le cas échéant.",
       "everyDay": "Tous les jours"
     },
     "subtasks": {
       "addPlaceholder": "Ajouter une sous-tâche...",
       "editAria": "Modifier la sous-tâche",
-      "deleteAria": "Supprimer la sous-tâche"
+      "deleteAria": "Supprimer la sous-tâche",
+      "deleteConfirm": "Supprimer cette sous-tâche ?"
     }
+  },
+  "habits": {
+    "pageTitle": "Habitudes",
+    "subtitle": "Construisez des séries et suivez votre régularité quotidienne",
+    "addAria": "Ajouter une habitude",
+    "editAria": "Modifier l'habitude",
+    "deleteAria": "Supprimer l'habitude",
+    "deleteConfirm": "Supprimer cette habitude ? Son historique de série sera perdu.",
+    "titlePlaceholder": "Quelle habitude voulez-vous construire ?",
+    "colorAria": "Couleur",
+    "frequencyAria": "Fréquence",
+    "frequency": {
+      "diaria": "Quotidienne",
+      "semanal": "Hebdomadaire",
+      "personalizada": "Personnalisée"
+    },
+    "weekdayAria": "Jour de la semaine",
+    "weekdaysAria": "Jours de la semaine",
+    "everyDay": "Tous les jours",
+    "markDoneAria": "Marquer comme fait aujourd'hui",
+    "alreadyDoneToday": "Fait aujourd'hui",
+    "streakLabel": "{{count}} jours de suite",
+    "emptyState": "Vous n'avez pas encore d'habitudes. Ajoutez la première."
   },
   "pomodoro": {
     "title": "Pomodoro",
@@ -245,6 +301,8 @@
     "noLinkedTask": "Aucune tâche liée",
     "linkedTaskAria": "Tâche liée",
     "resetAria": "Réinitialiser",
+    "skipBreak": "Passer la pause",
+    "skipBreakAria": "Passer la pause",
     "showFloatingAria": "Afficher en flottant",
     "showFloatingTitle": "Afficher comme fenêtre flottante",
     "completedToday_one": "{{count}} pomodoro terminé aujourd'hui",
@@ -363,6 +421,7 @@
     "restoreAria": "Restaurer la note",
     "archiveAria": "Archiver la note",
     "deleteAria": "Supprimer la note",
+    "deleteConfirm": "Supprimer cette note ? Cette action est irréversible.",
     "emptySearch": "Aucune note ne correspond à votre recherche.",
     "emptyArchived": "Vous n'avez aucune note archivée.",
     "emptyPinned": "Vous n'avez encore épinglé aucune note.",
@@ -426,6 +485,7 @@
     "noMatchingTransactions": "Aucune transaction ne correspond au filtre.",
     "autoGeneratedTitle": "Généré automatiquement",
     "deleteAria": "Supprimer",
+    "deleteConfirm": "Supprimer cette transaction ? Cette action est irréversible.",
     "settings": {
       "title": "Paramètres de comptabilité",
       "triggerAria": "Paramètres de comptabilité"
@@ -457,6 +517,7 @@
       "paymentUrlPlaceholder": "Lien de paiement (optionnel)",
       "emptyState": "Vous n'avez pas de transactions récurrentes configurées.",
       "deleteAria": "Supprimer la récurrente",
+      "deleteConfirm": "Supprimer ce paiement récurrent ?",
       "editAria": "Modifier la récurrente",
       "payAria": "Payer en ligne",
       "hint": "Elles sont générées automatiquement une fois par mois, la première fois que vous ouvrez l'application."
@@ -471,6 +532,7 @@
       "addAria": "Ajouter une catégorie",
       "editAria": "Modifier la catégorie",
       "deleteAria": "Supprimer la catégorie",
+      "deleteConfirm": "Supprimer cette catégorie ?",
       "emptyState": "Vous n'avez pas encore de catégories.",
       "icon": {
         "wallet": "Portefeuille",
@@ -531,6 +593,7 @@
       "contributePlaceholder": "Contribution",
       "contributeButton": "Ajouter",
       "deleteAria": "Supprimer l'objectif",
+      "deleteConfirm": "Supprimer cet objectif d'épargne ? Les contributions enregistrées seront perdues.",
       "reached": "Objectif atteint !",
       "emptyState": "Vous n'avez pas encore d'objectifs d'épargne configurés."
     }
@@ -572,6 +635,7 @@
     "favoriteAria": "Favorite",
     "editAria": "Modifier la recette",
     "deleteAria": "Supprimer la recette",
+    "deleteConfirm": "Supprimer cette recette ?",
     "minutesShort": "{{n}} min",
     "prevWeekAria": "Semaine précédente",
     "nextWeekAria": "Semaine suivante",
@@ -583,6 +647,7 @@
     "addMealAria": "Ajouter {{meal}}",
     "generateFromPlan": "Générer à partir du plan",
     "clearList": "Vider la liste",
+    "clearListConfirm": "Vider toute la liste de courses de cette semaine ?",
     "addItemPlaceholder": "Ajouter un article...",
     "addItemAria": "Ajouter un article",
     "deleteItemAria": "Supprimer l'article",

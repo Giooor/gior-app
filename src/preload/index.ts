@@ -17,6 +17,8 @@ import type { PomodoroMode, PomodoroState } from '../shared/pomodoro'
 import type { UpdateStatus } from '../shared/updater'
 import type { NewReminder, Reminder, UpdateReminder } from '../shared/reminders'
 import type { NewNote, Note, UpdateNote } from '../shared/notes'
+import type { Habit, HabitLog, NewHabit, UpdateHabit } from '../shared/habits'
+import type { NewProject, Project, UpdateProject } from '../shared/projects'
 import type { NewSavingsContribution, NewSavingsGoal, SavingsGoal } from '../shared/savings'
 import type {
   MealPlanEntry,
@@ -79,6 +81,22 @@ const api = {
     togglePin: (id: number): Promise<ActionResult> => ipcRenderer.invoke('notes:togglePin', id),
     toggleArchive: (id: number): Promise<ActionResult> => ipcRenderer.invoke('notes:toggleArchive', id),
     remove: (id: number): Promise<ActionResult> => ipcRenderer.invoke('notes:delete', id)
+  },
+  habits: {
+    list: (): Promise<Habit[]> => ipcRenderer.invoke('habits:list'),
+    add: (input: NewHabit): Promise<ActionResult & { id?: number }> => ipcRenderer.invoke('habits:add', input),
+    update: (id: number, input: UpdateHabit): Promise<ActionResult> => ipcRenderer.invoke('habits:update', id, input),
+    remove: (id: number): Promise<ActionResult> => ipcRenderer.invoke('habits:delete', id),
+    toggleLog: (habitId: number, date: string): Promise<ActionResult & { completed?: boolean }> =>
+      ipcRenderer.invoke('habits:toggleLog', habitId, date),
+    logsSince: (since: string): Promise<HabitLog[]> => ipcRenderer.invoke('habits:logsSince', since)
+  },
+  projects: {
+    list: (): Promise<Project[]> => ipcRenderer.invoke('projects:list'),
+    add: (input: NewProject): Promise<ActionResult & { id?: number }> => ipcRenderer.invoke('projects:add', input),
+    update: (id: number, input: UpdateProject): Promise<ActionResult> =>
+      ipcRenderer.invoke('projects:update', id, input),
+    remove: (id: number): Promise<ActionResult> => ipcRenderer.invoke('projects:delete', id)
   },
   recipes: {
     list: (): Promise<Recipe[]> => ipcRenderer.invoke('recipes:list'),
@@ -146,6 +164,9 @@ const api = {
   },
   tasks: {
     list: (date: string): Promise<Task[]> => ipcRenderer.invoke('tasks:list', date),
+    listOverdue: (beforeDate: string): Promise<Task[]> => ipcRenderer.invoke('tasks:listOverdue', beforeDate),
+    reschedule: (id: number, date: string): Promise<ActionResult> =>
+      ipcRenderer.invoke('tasks:reschedule', id, date),
     add: (input: NewTask): Promise<ActionResult> => ipcRenderer.invoke('tasks:add', input),
     update: (id: number, input: UpdateTask): Promise<ActionResult> => ipcRenderer.invoke('tasks:update', id, input),
     toggle: (id: number): Promise<ActionResult> => ipcRenderer.invoke('tasks:toggle', id),
@@ -169,6 +190,7 @@ const api = {
     start: (): Promise<PomodoroState> => ipcRenderer.invoke('pomodoro:start'),
     pause: (): Promise<PomodoroState> => ipcRenderer.invoke('pomodoro:pause'),
     reset: (): Promise<PomodoroState> => ipcRenderer.invoke('pomodoro:reset'),
+    skipBreak: (): Promise<PomodoroState> => ipcRenderer.invoke('pomodoro:skipBreak'),
     openWidget: (): Promise<PomodoroState> => ipcRenderer.invoke('pomodoro:openWidget'),
     focusMain: (): Promise<void> => ipcRenderer.invoke('pomodoro:focusMain'),
     setTask: (taskId: number | null, taskTitle: string | null, targetMinutes: number | null): Promise<PomodoroState> =>

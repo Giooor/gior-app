@@ -33,6 +33,7 @@
     "inicio": { "name": "Inicio", "description": "Resumen general de la app" },
     "contabilidad": { "name": "Contabilidad", "description": "Controla tus ingresos, gastos y balance" },
     "tareas": { "name": "Tareas", "description": "Organiza tu día y enfócate con el Pomodoro" },
+    "habitos": { "name": "Hábitos", "description": "Construye rachas y sigue tu consistencia diaria" },
     "recordatorios": { "name": "Recordatorios", "description": "Cumpleaños, aniversarios y fechas importantes" },
     "recetas": { "name": "Recetas", "description": "Recetario, plan semanal y lista de mercado" },
     "notas": { "name": "Notas", "description": "Ideas, apuntes y todo lo que no quieres olvidar" },
@@ -79,12 +80,16 @@
     "goalSaveFailed": "No se pudo guardar la meta.",
     "categorySelectRequired": "Selecciona una categoría.",
     "categoryAlreadyExists": "Ya existe una categoría con ese nombre.",
+    "projectAlreadyExists": "Ya existe un proyecto con ese nombre.",
     "invalidBudget": "El presupuesto debe ser un número mayor o igual a cero.",
     "invalidCurrency": "Moneda inválida.",
     "invalidExchangeRate": "La tasa de cambio debe ser un número mayor a cero.",
     "securityQuestionRequired": "Elige una pregunta y escribe una respuesta.",
     "securityAnswerIncorrect": "La respuesta no es correcta.",
-    "updaterDevMode": "Las actualizaciones solo funcionan en la versión instalada de la app."
+    "updaterDevMode": "Las actualizaciones solo funcionan en la versión instalada de la app.",
+    "invalidMuscleGroup": "Grupo muscular inválido.",
+    "routineExercisesRequired": "Agrega al menos un ejercicio a la rutina.",
+    "exerciseInUse": "No se puede eliminar: este ejercicio ya se usó en un entrenamiento."
   },
   "auth": {
     "setupTitle": "Bienvenido",
@@ -169,13 +174,18 @@
     "emptyState": "Aún no tienes recordatorios. Agrega el primero.",
     "editAria": "Editar recordatorio",
     "deleteAria": "Eliminar recordatorio",
+    "deleteConfirm": "¿Eliminar este recordatorio?",
     "past": "Ya pasó",
     "pastNoRepeat": "Ya pasó · no se repite",
     "noRepeatSuffix": "{{type}} · no se repite",
     "payNow": "Pagar ahora",
     "nextYear": "{{month}} próximo año",
     "inDays": "En {{n}} días",
-    "titleRequired": "Ingresa un título."
+    "titleRequired": "Ingresa un título.",
+    "prevMonthAria": "Mes anterior",
+    "nextMonthAria": "Mes siguiente",
+    "thisMonth": "Este mes",
+    "addForDayAria": "Agregar recordatorio en este día"
   },
   "tasks": {
     "pageTitle": "Tareas",
@@ -201,7 +211,28 @@
     "editAria": "Editar tarea",
     "subtasksAria": "Subtareas",
     "deleteAria": "Eliminar tarea",
+    "deleteConfirm": "¿Eliminar esta tarea?",
     "escapeToCancelAria": "Cancelar",
+    "projectAria": "Proyecto",
+    "noProject": "Sin proyecto",
+    "projectFilterAria": "Filtrar por proyecto",
+    "projectFilterAll": "Todos",
+    "overdue": {
+      "title_one": "{{count}} tarea pendiente de días anteriores",
+      "title_other": "{{count}} tareas pendientes de días anteriores",
+      "moveToTodayAria": "Mover a hoy",
+      "completeAria": "Marcar como completada"
+    },
+    "projects": {
+      "toggleLabel": "Proyectos",
+      "namePlaceholder": "Nombre del proyecto",
+      "colorAria": "Color del proyecto",
+      "addAria": "Agregar proyecto",
+      "editAria": "Editar proyecto",
+      "deleteAria": "Eliminar proyecto",
+      "deleteConfirm": "¿Eliminar este proyecto? Las tareas asignadas quedarán sin proyecto.",
+      "emptyState": "Aún no tienes proyectos. Crea el primero."
+    },
     "recurring": {
       "toggleLabel": "Tareas recurrentes",
       "titlePlaceholder": "Título de la tarea",
@@ -216,14 +247,39 @@
       "weekdayPreset": "Lunes a viernes",
       "emptyState": "No tienes tareas recurrentes configuradas.",
       "deleteAria": "Eliminar recurrente",
+      "deleteConfirm": "¿Eliminar esta tarea recurrente?",
       "hint": "Se generan automáticamente cada día que abras la app, si corresponde.",
       "everyDay": "Todos los días"
     },
     "subtasks": {
       "addPlaceholder": "Agregar subtarea...",
       "editAria": "Editar subtarea",
-      "deleteAria": "Eliminar subtarea"
+      "deleteAria": "Eliminar subtarea",
+      "deleteConfirm": "¿Eliminar esta subtarea?"
     }
+  },
+  "habits": {
+    "pageTitle": "Hábitos",
+    "subtitle": "Construye rachas y sigue tu consistencia diaria",
+    "addAria": "Agregar hábito",
+    "editAria": "Editar hábito",
+    "deleteAria": "Eliminar hábito",
+    "deleteConfirm": "¿Eliminar este hábito? Se perderá su historial de rachas.",
+    "titlePlaceholder": "¿Qué hábito quieres construir?",
+    "colorAria": "Color",
+    "frequencyAria": "Frecuencia",
+    "frequency": {
+      "diaria": "Diaria",
+      "semanal": "Semanal",
+      "personalizada": "Personalizada"
+    },
+    "weekdayAria": "Día de la semana",
+    "weekdaysAria": "Días de la semana",
+    "everyDay": "Todos los días",
+    "markDoneAria": "Marcar hecho hoy",
+    "alreadyDoneToday": "Hecho hoy",
+    "streakLabel": "{{count}} días seguidos",
+    "emptyState": "Aún no tienes hábitos. Agrega el primero."
   },
   "pomodoro": {
     "title": "Pomodoro",
@@ -245,6 +301,8 @@
     "noLinkedTask": "Sin tarea vinculada",
     "linkedTaskAria": "Tarea vinculada",
     "resetAria": "Reiniciar",
+    "skipBreak": "Saltar descanso",
+    "skipBreakAria": "Saltar descanso",
     "showFloatingAria": "Mostrar flotante",
     "showFloatingTitle": "Mostrar como ventana flotante",
     "completedToday_one": "{{count}} pomodoro completado hoy",
@@ -363,6 +421,7 @@
     "restoreAria": "Restaurar nota",
     "archiveAria": "Archivar nota",
     "deleteAria": "Eliminar nota",
+    "deleteConfirm": "¿Eliminar esta nota? Esta acción no se puede deshacer.",
     "emptySearch": "No hay notas que coincidan con tu búsqueda.",
     "emptyArchived": "No tienes notas archivadas.",
     "emptyPinned": "Aún no has fijado ninguna nota.",
@@ -426,6 +485,7 @@
     "noMatchingTransactions": "No hay transacciones que coincidan con el filtro.",
     "autoGeneratedTitle": "Generado automáticamente",
     "deleteAria": "Eliminar",
+    "deleteConfirm": "¿Eliminar esta transacción? Esta acción no se puede deshacer.",
     "settings": {
       "title": "Ajustes de Contabilidad",
       "triggerAria": "Ajustes de contabilidad"
@@ -457,6 +517,7 @@
       "paymentUrlPlaceholder": "Link de pago (opcional)",
       "emptyState": "No tienes transacciones recurrentes configuradas.",
       "deleteAria": "Eliminar recurrente",
+      "deleteConfirm": "¿Eliminar este pago recurrente?",
       "editAria": "Editar recurrente",
       "payAria": "Pagar en línea",
       "hint": "Se generan automáticamente una vez al mes, la primera vez que abras la app."
@@ -471,6 +532,7 @@
       "addAria": "Agregar categoría",
       "editAria": "Editar categoría",
       "deleteAria": "Eliminar categoría",
+      "deleteConfirm": "¿Eliminar esta categoría?",
       "emptyState": "Aún no tienes categorías.",
       "icon": {
         "wallet": "Billetera",
@@ -531,6 +593,7 @@
       "contributePlaceholder": "Aporte",
       "contributeButton": "Aportar",
       "deleteAria": "Eliminar meta",
+      "deleteConfirm": "¿Eliminar esta meta de ahorro? Se perderán sus aportes registrados.",
       "reached": "¡Meta alcanzada!",
       "emptyState": "Aún no tienes metas de ahorro configuradas."
     }
@@ -572,6 +635,7 @@
     "favoriteAria": "Favorita",
     "editAria": "Editar receta",
     "deleteAria": "Eliminar receta",
+    "deleteConfirm": "¿Eliminar esta receta?",
     "minutesShort": "{{n}} min",
     "prevWeekAria": "Semana anterior",
     "nextWeekAria": "Semana siguiente",
@@ -583,6 +647,7 @@
     "addMealAria": "Agregar {{meal}}",
     "generateFromPlan": "Generar desde el plan",
     "clearList": "Vaciar lista",
+    "clearListConfirm": "¿Vaciar toda la lista de mercado de esta semana?",
     "addItemPlaceholder": "Agregar artículo...",
     "addItemAria": "Agregar artículo",
     "deleteItemAria": "Eliminar artículo",
