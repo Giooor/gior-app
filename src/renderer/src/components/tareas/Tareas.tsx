@@ -227,9 +227,16 @@ export default function Tareas(): JSX.Element {
   const sortedTasks = useMemo(
     () =>
       [...tasks].sort((a, b) => {
+        const aCompleted = a.completed ? 1 : 0
+        const bCompleted = b.completed ? 1 : 0
         const aRecurring = a.recurringId !== null ? 1 : 0
         const bRecurring = b.recurringId !== null ? 1 : 0
-        return aRecurring - bRecurring || PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority] || a.id - b.id
+        return (
+          aCompleted - bCompleted ||
+          aRecurring - bRecurring ||
+          PRIORITY_RANK[a.priority] - PRIORITY_RANK[b.priority] ||
+          a.id - b.id
+        )
       }),
     [tasks]
   )
