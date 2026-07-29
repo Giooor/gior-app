@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-"Gior" — a personal productivity Electron desktop app (tasks/pomodoro, accounting/ledger, recipes, notes, reminders). Stack: `electron-vite`, React 18 + TypeScript renderer, `sql.js` (SQLite compiled to WASM) for persistence, `i18next` for translations. Windows desktop target (NSIS installer via `electron-builder`, config in `electron-builder.yml`).
+"Gior" — a personal productivity Electron desktop app (tasks/pomodoro, accounting/ledger, recipes, notes, reminders, habits, task projects). Stack: `electron-vite`, React 18 + TypeScript renderer, `sql.js` (SQLite compiled to WASM) for persistence, `i18next` for translations. Windows desktop target (NSIS installer via `electron-builder`, config in `electron-builder.yml`).
 
 ## Commands
 
@@ -44,3 +44,4 @@ Before running it:
 
 - No emojis anywhere in code or UI text.
 - Windows path handling: always use `join()` from `'path'`; no manual backslash concatenation anywhere in the codebase.
+- Destructive actions (deleting a task, transaction, habit, note, recipe, category, project, etc.) must confirm first via the `useConfirm()` hook (`src/renderer/src/lib/useConfirm.tsx`) + `<ConfirmDialog>`, not a bare `window.confirm()`. Call `confirm(t('...deleteConfirm'))` before the IPC delete call, and render `{dialog}` somewhere in the component's JSX. Follow the existing usages (e.g. `Tareas.tsx`, `Habitos.tsx`) as a template, and add matching `deleteConfirm` keys to all 4 locale files.
