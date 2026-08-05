@@ -74,6 +74,17 @@ import { addReminder, deleteReminder, listReminders, updateReminder } from './re
 import { addNote, deleteNote, listNotes, toggleArchiveNote, togglePinNote, updateNote } from './notes'
 import { addHabit, deleteHabit, listHabits, listHabitLogsSince, toggleHabitLog, updateHabit } from './habits'
 import { addProject, deleteProject, listProjects, updateProject } from './projects'
+import {
+  addBoardProject,
+  addBoardTask,
+  deleteBoardProject,
+  deleteBoardTask,
+  listBoardProjects,
+  listBoardTasks,
+  moveBoardTask,
+  updateBoardProject,
+  updateBoardTask
+} from './boards'
 import { checkAndSendDailyNotifications } from './notifications'
 import {
   addRecipe,
@@ -106,6 +117,13 @@ import type { NewReminder, UpdateReminder } from '../shared/reminders'
 import type { NewNote, UpdateNote } from '../shared/notes'
 import type { NewHabit, UpdateHabit } from '../shared/habits'
 import type { NewProject, UpdateProject } from '../shared/projects'
+import type {
+  BoardStatus,
+  NewBoardProject,
+  NewBoardTask,
+  UpdateBoardProject,
+  UpdateBoardTask
+} from '../shared/boards'
 import type { NewMealPlanEntry, NewRecipe, NewShoppingListItem, UpdateRecipe } from '../shared/recipes'
 
 let mainWindow: BrowserWindow | null = null
@@ -564,6 +582,65 @@ app.whenReady().then(async () => {
 
   ipcMain.handle('projects:delete', (_event, id: number) => {
     deleteProject(id)
+    return { ok: true }
+  })
+
+  ipcMain.handle('boardProjects:list', () => listBoardProjects())
+
+  ipcMain.handle('boardProjects:add', (_event, input: NewBoardProject) => {
+    try {
+      const id = addBoardProject(input)
+      return { ok: true, id }
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'errors.generic' }
+    }
+  })
+
+  ipcMain.handle('boardProjects:update', (_event, id: number, input: UpdateBoardProject) => {
+    try {
+      updateBoardProject(id, input)
+      return { ok: true }
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'errors.generic' }
+    }
+  })
+
+  ipcMain.handle('boardProjects:delete', (_event, id: number) => {
+    deleteBoardProject(id)
+    return { ok: true }
+  })
+
+  ipcMain.handle('boardTasks:list', (_event, boardProjectId: number) => listBoardTasks(boardProjectId))
+
+  ipcMain.handle('boardTasks:add', (_event, input: NewBoardTask) => {
+    try {
+      addBoardTask(input)
+      return { ok: true }
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'errors.generic' }
+    }
+  })
+
+  ipcMain.handle('boardTasks:update', (_event, id: number, input: UpdateBoardTask) => {
+    try {
+      updateBoardTask(id, input)
+      return { ok: true }
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'errors.generic' }
+    }
+  })
+
+  ipcMain.handle('boardTasks:move', (_event, id: number, status: BoardStatus, targetIndex: number) => {
+    try {
+      moveBoardTask(id, status, targetIndex)
+      return { ok: true }
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'errors.generic' }
+    }
+  })
+
+  ipcMain.handle('boardTasks:delete', (_event, id: number) => {
+    deleteBoardTask(id)
     return { ok: true }
   })
 

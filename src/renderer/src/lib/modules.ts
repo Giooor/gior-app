@@ -1,9 +1,10 @@
-import { CalendarHeart, ChefHat, Flame, Home, ListChecks, Settings, StickyNote, Wallet } from 'lucide-react'
+import { CalendarHeart, ChefHat, Flame, Home, Kanban, ListChecks, Settings, StickyNote, Wallet } from 'lucide-react'
 
 export type ModuleKey =
   | 'inicio'
   | 'contabilidad'
   | 'tareas'
+  | 'proyectos'
   | 'habitos'
   | 'recordatorios'
   | 'recetas'
@@ -32,6 +33,13 @@ export const modules: ModuleInfo[] = [
     nameKey: 'nav.tareas.name',
     descriptionKey: 'nav.tareas.description',
     icon: ListChecks,
+    enabled: true
+  },
+  {
+    key: 'proyectos',
+    nameKey: 'nav.proyectos.name',
+    descriptionKey: 'nav.proyectos.description',
+    icon: Kanban,
     enabled: true
   },
   {

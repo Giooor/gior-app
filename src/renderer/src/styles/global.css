@@ -4371,6 +4371,159 @@ body.widget-shell::after {
   border-color: var(--text-primary);
 }
 
+/* Proyectos */
+
+.proyecto-card {
+  cursor: pointer;
+}
+
+.proyecto-progress-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--bg-hover);
+  overflow: hidden;
+}
+
+.proyecto-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+
+.proyecto-board-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.proyecto-add-task {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: var(--glass-border);
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow-neu-out-sm);
+  margin-bottom: 20px;
+}
+
+.proyecto-add-task input[type='text'] {
+  flex: 1;
+  padding: 9px 12px;
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  border-radius: 8px;
+  font-size: 14px;
+  background: var(--bg-surface-translucent);
+}
+
+.proyecto-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .proyecto-board {
+    grid-template-columns: 1fr;
+  }
+}
+
+.proyecto-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: var(--glass-border);
+  box-shadow: var(--shadow-neu-out-sm);
+  min-height: 160px;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.proyecto-column.drag-over {
+  box-shadow: var(--shadow-neu-out-sm), 0 0 0 2px rgba(99, 102, 241, 0.35);
+}
+
+.proyecto-column-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+}
+
+.proyecto-column-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-faint);
+  background: var(--bg-hover);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+
+.proyecto-column-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.proyecto-column-empty {
+  margin: 0;
+  padding: 10px 0;
+  font-size: 12px;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+.proyecto-task-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-neu-out-sm);
+  cursor: grab;
+}
+
+.proyecto-task-card:active {
+  cursor: grabbing;
+}
+
+.proyecto-task-title {
+  font-size: 13px;
+  font-weight: 600;
+  cursor: text;
+  word-break: break-word;
+}
+
+.proyecto-task-edit-input {
+  width: 100%;
+  padding: 5px 7px;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--bg-surface-translucent);
+}
+
+.proyecto-task-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
 /* Recetas */
 
 .recetas-header {

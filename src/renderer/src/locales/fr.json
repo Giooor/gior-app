@@ -33,6 +33,7 @@
     "inicio": { "name": "Accueil", "description": "Aperçu général de l'application" },
     "contabilidad": { "name": "Finances", "description": "Suivez vos revenus, dépenses et votre solde" },
     "tareas": { "name": "Tâches", "description": "Organisez votre journée et concentrez-vous avec le Pomodoro" },
+    "proyectos": { "name": "Projets", "description": "Organisez vos projets comme un tableau kanban" },
     "habitos": { "name": "Habitudes", "description": "Construisez des séries et suivez votre régularité quotidienne" },
     "recordatorios": { "name": "Rappels", "description": "Anniversaires et dates importantes" },
     "recetas": { "name": "Recettes", "description": "Livre de recettes, plan hebdomadaire et liste de courses" },
@@ -256,6 +257,30 @@
       "editAria": "Modifier la sous-tâche",
       "deleteAria": "Supprimer la sous-tâche",
       "deleteConfirm": "Supprimer cette sous-tâche ?"
+    }
+  },
+  "proyectos": {
+    "pageTitle": "Projets",
+    "subtitle": "Organisez vos projets comme un tableau : à faire, en cours et terminé",
+    "addAria": "Ajouter un projet",
+    "editAria": "Modifier le projet",
+    "deleteAria": "Supprimer le projet",
+    "deleteConfirm": "Supprimer ce projet ? Toutes ses tâches seront également supprimées.",
+    "namePlaceholder": "Nom du projet",
+    "colorAria": "Couleur du projet",
+    "emptyState": "Vous n'avez pas encore de projets. Créez le premier.",
+    "noTasks": "Aucune tâche",
+    "taskProgress": "{{done}} sur {{total}} tâches",
+    "backAria": "Retour aux projets",
+    "newTaskPlaceholder": "Nouvelle tâche...",
+    "addTaskAria": "Ajouter une tâche",
+    "deleteTaskAria": "Supprimer la tâche",
+    "deleteTaskConfirm": "Supprimer cette tâche ?",
+    "columnEmpty": "Aucune tâche ici",
+    "status": {
+      "todo": "À faire",
+      "inProgress": "En cours",
+      "done": "Terminé"
     }
   },
   "habits": {

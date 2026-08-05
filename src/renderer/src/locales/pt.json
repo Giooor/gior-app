@@ -33,6 +33,7 @@
     "inicio": { "name": "Início", "description": "Resumo geral do aplicativo" },
     "contabilidad": { "name": "Finanças", "description": "Controle suas receitas, despesas e saldo" },
     "tareas": { "name": "Tarefas", "description": "Organize seu dia e foque com o Pomodoro" },
+    "proyectos": { "name": "Projetos", "description": "Organize seus projetos como um quadro kanban" },
     "habitos": { "name": "Hábitos", "description": "Construa sequências e acompanhe sua consistência diária" },
     "recordatorios": { "name": "Lembretes", "description": "Aniversários e datas importantes" },
     "recetas": { "name": "Receitas", "description": "Livro de receitas, plano semanal e lista de compras" },
@@ -256,6 +257,30 @@
       "editAria": "Editar subtarefa",
       "deleteAria": "Excluir subtarefa",
       "deleteConfirm": "Excluir esta subtarefa?"
+    }
+  },
+  "proyectos": {
+    "pageTitle": "Projetos",
+    "subtitle": "Organize seus projetos como um quadro: a fazer, em andamento e concluído",
+    "addAria": "Adicionar projeto",
+    "editAria": "Editar projeto",
+    "deleteAria": "Excluir projeto",
+    "deleteConfirm": "Excluir este projeto? Todas as suas tarefas também serão excluídas.",
+    "namePlaceholder": "Nome do projeto",
+    "colorAria": "Cor do projeto",
+    "emptyState": "Você ainda não tem projetos. Crie o primeiro.",
+    "noTasks": "Sem tarefas",
+    "taskProgress": "{{done}} de {{total}} tarefas",
+    "backAria": "Voltar aos projetos",
+    "newTaskPlaceholder": "Nova tarefa...",
+    "addTaskAria": "Adicionar tarefa",
+    "deleteTaskAria": "Excluir tarefa",
+    "deleteTaskConfirm": "Excluir esta tarefa?",
+    "columnEmpty": "Nenhuma tarefa aqui",
+    "status": {
+      "todo": "A fazer",
+      "inProgress": "Em andamento",
+      "done": "Concluído"
     }
   },
   "habits": {

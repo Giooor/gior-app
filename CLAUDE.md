@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-"Gior" — a personal productivity Electron desktop app (tasks/pomodoro, accounting/ledger, recipes, notes, reminders, habits, task projects). Stack: `electron-vite`, React 18 + TypeScript renderer, `sql.js` (SQLite compiled to WASM) for persistence, `i18next` for translations. Windows desktop target (NSIS installer via `electron-builder`, config in `electron-builder.yml`).
+"Gior" — a personal productivity Electron desktop app (tasks/pomodoro, accounting/ledger, recipes, notes, reminders, habits, task projects, kanban-style project boards). Stack: `electron-vite`, React 18 + TypeScript renderer, `sql.js` (SQLite compiled to WASM) for persistence, `i18next` for translations. Windows desktop target (NSIS installer via `electron-builder`, config in `electron-builder.yml`).
 
 ## Commands
 
@@ -22,6 +22,8 @@ There is no `typecheck` or `test` script. **To verify TypeScript correctness aft
 - `src/preload/index.ts` — single file exposing `window.api.<domain>.<method>()` via `contextBridge`; every method is `ipcRenderer.invoke('domain:method', ...)`.
 - `src/renderer/src/` — React UI (`components/`, `lib/`, `locales/`, `styles/`).
 - `src/shared/` — types/constants imported by both main and renderer.
+
+Note: two unrelated "project" concepts exist. `src/main/projects.ts` / `src/shared/projects.ts` is a lightweight colored tag on daily tasks (used only inside Tareas, table `projects`). `src/main/boards.ts` / `src/shared/boards.ts` is the standalone "Proyectos" kanban module (own nav entry, tables `board_projects` + `board_tasks`, 3-column board: todo/in_progress/done, drag-and-drop in `ProjectBoard.tsx`). Both are user-facing as "Proyecto" by design (kept coexisting intentionally); don't conflate their code.
 
 **IPC convention**: channel strings are `'domain:method'`, matching `window.api.domain.method()` 1:1 (e.g. `'tasks:toggle'` ↔ `window.api.tasks.toggle()`). Adding a new IPC call means adding it in all three places: `main/index.ts` (`ipcMain.handle`), `preload/index.ts` (bridge method), and the shared type if new input/output shapes are involved. Handlers generally return `{ ok: boolean; error?: string }`, sometimes with extra fields.
 

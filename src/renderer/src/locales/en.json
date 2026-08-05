@@ -33,6 +33,7 @@
     "inicio": { "name": "Home", "description": "General overview of the app" },
     "contabilidad": { "name": "Finances", "description": "Track your income, expenses and balance" },
     "tareas": { "name": "Tasks", "description": "Organize your day and focus with Pomodoro" },
+    "proyectos": { "name": "Projects", "description": "Organize your projects as a kanban board" },
     "habitos": { "name": "Habits", "description": "Build streaks and track your daily consistency" },
     "recordatorios": { "name": "Reminders", "description": "Birthdays, anniversaries and important dates" },
     "recetas": { "name": "Recipes", "description": "Recipe book, weekly plan and shopping list" },
@@ -256,6 +257,30 @@
       "editAria": "Edit subtask",
       "deleteAria": "Delete subtask",
       "deleteConfirm": "Delete this subtask?"
+    }
+  },
+  "proyectos": {
+    "pageTitle": "Projects",
+    "subtitle": "Organize your projects like a board: to do, in progress and done",
+    "addAria": "Add project",
+    "editAria": "Edit project",
+    "deleteAria": "Delete project",
+    "deleteConfirm": "Delete this project? All of its tasks will be deleted too.",
+    "namePlaceholder": "Project name",
+    "colorAria": "Project color",
+    "emptyState": "You don't have any projects yet. Create the first one.",
+    "noTasks": "No tasks",
+    "taskProgress": "{{done}} of {{total}} tasks",
+    "backAria": "Back to projects",
+    "newTaskPlaceholder": "New task...",
+    "addTaskAria": "Add task",
+    "deleteTaskAria": "Delete task",
+    "deleteTaskConfirm": "Delete this task?",
+    "columnEmpty": "No tasks here",
+    "status": {
+      "todo": "To do",
+      "inProgress": "In progress",
+      "done": "Done"
     }
   },
   "habits": {

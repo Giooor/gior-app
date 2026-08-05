@@ -19,6 +19,15 @@ import type { NewReminder, Reminder, UpdateReminder } from '../shared/reminders'
 import type { NewNote, Note, UpdateNote } from '../shared/notes'
 import type { Habit, HabitLog, NewHabit, UpdateHabit } from '../shared/habits'
 import type { NewProject, Project, UpdateProject } from '../shared/projects'
+import type {
+  BoardProject,
+  BoardStatus,
+  BoardTask,
+  NewBoardProject,
+  NewBoardTask,
+  UpdateBoardProject,
+  UpdateBoardTask
+} from '../shared/boards'
 import type { NewSavingsContribution, NewSavingsGoal, SavingsGoal } from '../shared/savings'
 import type {
   MealPlanEntry,
@@ -97,6 +106,23 @@ const api = {
     update: (id: number, input: UpdateProject): Promise<ActionResult> =>
       ipcRenderer.invoke('projects:update', id, input),
     remove: (id: number): Promise<ActionResult> => ipcRenderer.invoke('projects:delete', id)
+  },
+  boardProjects: {
+    list: (): Promise<BoardProject[]> => ipcRenderer.invoke('boardProjects:list'),
+    add: (input: NewBoardProject): Promise<ActionResult & { id?: number }> =>
+      ipcRenderer.invoke('boardProjects:add', input),
+    update: (id: number, input: UpdateBoardProject): Promise<ActionResult> =>
+      ipcRenderer.invoke('boardProjects:update', id, input),
+    remove: (id: number): Promise<ActionResult> => ipcRenderer.invoke('boardProjects:delete', id)
+  },
+  boardTasks: {
+    list: (boardProjectId: number): Promise<BoardTask[]> => ipcRenderer.invoke('boardTasks:list', boardProjectId),
+    add: (input: NewBoardTask): Promise<ActionResult> => ipcRenderer.invoke('boardTasks:add', input),
+    update: (id: number, input: UpdateBoardTask): Promise<ActionResult> =>
+      ipcRenderer.invoke('boardTasks:update', id, input),
+    move: (id: number, status: BoardStatus, targetIndex: number): Promise<ActionResult> =>
+      ipcRenderer.invoke('boardTasks:move', id, status, targetIndex),
+    remove: (id: number): Promise<ActionResult> => ipcRenderer.invoke('boardTasks:delete', id)
   },
   recipes: {
     list: (): Promise<Recipe[]> => ipcRenderer.invoke('recipes:list'),

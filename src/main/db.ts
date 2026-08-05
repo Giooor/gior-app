@@ -211,6 +211,24 @@ export async function initDb(): Promise<void> {
     );
   `)
 
+  db.run(`
+    CREATE TABLE IF NOT EXISTS board_projects (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL UNIQUE COLLATE NOCASE,
+      color TEXT NOT NULL
+    );
+  `)
+
+  db.run(`
+    CREATE TABLE IF NOT EXISTS board_tasks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      board_project_id INTEGER NOT NULL,
+      title TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'todo' CHECK (status IN ('todo', 'in_progress', 'done')),
+      position INTEGER NOT NULL DEFAULT 0
+    );
+  `)
+
   ensureColumn(db, 'reminders', 'repeats', 'repeats INTEGER NOT NULL DEFAULT 1')
 
   ensureColumn(db, 'transactions', 'recurring_id', 'recurring_id INTEGER')

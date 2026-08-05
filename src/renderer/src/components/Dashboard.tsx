@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { LockKeyhole, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import Contabilidad from './contabilidad/Contabilidad'
 import Tareas from './tareas/Tareas'
+import Proyectos from './proyectos/Proyectos'
 import Habitos from './habitos/Habitos'
 import Recordatorios from './recordatorios/Recordatorios'
 import Recetas from './recetas/Recetas'
@@ -106,6 +107,7 @@ export default function Dashboard({ onLock }: Props): JSX.Element {
         {active === 'inicio' && <Home onNavigate={setActive} />}
         {active === 'contabilidad' && <Contabilidad />}
         {active === 'tareas' && <Tareas />}
+        {active === 'proyectos' && <Proyectos />}
         {active === 'habitos' && <Habitos />}
         {active === 'recordatorios' && <Recordatorios />}
         {active === 'recetas' && <Recetas />}
